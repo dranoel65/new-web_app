@@ -55,6 +55,7 @@ jobs:
           #if: github.ref == 'refs/heads/develop'
           run: |
             # deploy app to s3
+            chmod +x ./script/deploy_web_app.sh
             ./script/deploy_web_app.sh ${{ secrets.site_develop }} ${{ secrets.bucket_develop }}
         #- name: Push the image qa
         #  if: github.ref == 'refs/heads/qa'
