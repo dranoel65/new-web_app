@@ -4,11 +4,11 @@ cd app-build
 
 # Variables
 seed=$(( ( RANDOM % 1000 )  + 1 ))
-site=$(develop-transportation.miaguila.com)
-bucket=$(develop-transportation.miaguila.com)
+site=$1
+bucket=$2
 
 # Build Folder
-cd /app-build
+cd ~/app-build
 
 mkdir -p build-dev/css/bootstrap
 
