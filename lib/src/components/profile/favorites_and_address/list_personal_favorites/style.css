@@ -1,0 +1,30 @@
+/*.map-area {
+    width: 500px;
+    height: 400px;
+    margin: 10px;
+}
+
+#mapArea {
+    width: 500px;
+    height: 400px;
+    margin: 10px;
+}*/
+
+
+#map-canvas {
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}
+
+.import-textarea {
+    height: 200px;
+}
+
+.import-button {
+    margin-top: 10px;
+}
+
+.img-map {
+    height: 200px;
+}

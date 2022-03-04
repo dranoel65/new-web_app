@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="alert alert-danger" role="alert" *ngIf="errors.containsKey('login')">
+                <p><b>{{errors['login']['title']}}</b> {{errors['login']['errorMessage']}}</p>
+            </div>
+            <div class="vertical-center">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="text-center">
+                            <img width="200" class="img" src="assets/logocentral.jpg" alt="">
+                        </div>
+                        <div>
+                            <div class="card-text">
+                                <div class="form-group" [ngClass]="{'has-danger': errors.containsKey('email')}">
+                                    <input
+                                            [(ngModel)]="login['email']"
+                                            type="email"
+                                            class="form-control"
+                                            id="exampleInputEmail1"
+                                            aria-describedby="emailHelp"
+                                            placeholder="Correo electrónico"/>
+                                    <div class="form-control-feedback" *ngIf="errors.containsKey('email')">
+                                        {{errors['email']['errorMessage']}}
+                                    </div>
+                                </div>
+                                <div class="form-group" [ngClass]="{'has-danger': errors.containsKey('password')}">
+                                    <input
+                                            [(ngModel)]="login['password']"
+                                            type="password"
+                                            class="form-control"
+                                            id="exampleInputPassword1"
+                                            placeholder="Contraseña"/>
+                                    <div class="form-control-feedback" *ngIf="errors.containsKey('password')">
+                                        {{errors['password']['errorMessage']}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12" style="padding: 0">
+                                <button type="button" (click)="passwordRestored()" class="btn btn-primary btn-block btn-login">
+                                    <b>INICIAR SESIÓN</b>
+                                </button>
+                            </div>
+                            <small>
+                                <a class="float-right" style="margin-top:10px;color:#191919" [routerLink]="goToRecoveryPassword(login['email'])">¿Olvidaste tu Contraseña?</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal ConfirmModal-->
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Restablecer Contraseña</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Para brindarte una mejor experiencia nos hemos renovado.
+                Es necesario que restaures tu contraseña para acceder a todo lo nuevo que Mi Águila tiene para ti.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" [routerLink]="goToRecoveryPassword(login['email'])" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

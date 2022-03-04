@@ -1,0 +1,235 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item" >Administración</a>
+                <a class="breadcrumb-item" [routerLink]="RoutePaths.list_alliances.toUrl()">Alianzas</a>
+                <a class="breadcrumb-item " [routerLink]="goToViewAlliance(alliance['_id'])">
+                    Alianza <span>{{alliance['legal']['name']}}</span>
+                </a>
+                <span class="breadcrumb-item active" *ngIf="!edit">Nuevo</span>
+                <span class="breadcrumb-item active" *ngIf="edit">Editar {{alliance['legal']['name']}}</span>
+            </nav>
+        </div>
+
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'alliances').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'alliances')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <sel-menu_overview></sel-menu_overview>
+            <div>
+                <h1>Alianza / <span *ngIf="!edit">Nuevo</span><span *ngIf="edit">{{alliance['legal']['name']}}</span>
+                </h1>
+                <h4 *ngFor="let alliance of father_alliance">
+                    <i class="material-icons mirror-text">keyboard_return</i>
+                    <a [routerLink]="goToViewAlliance(alliance['_id'])">{{alliance['legal']['name']}}</a>
+                </h4>
+            </div>
+            <div class="container">
+
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-name').length > 0}">
+                                <label for="legal-name" class="col-md-2 col-form-label">Nombre</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['name']"
+                                            class="form-control"
+                                            type="text"
+                                            id="legal-name">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-name').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-name')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-address').length > 0}">
+                                <label for="legal-address" class="col-md-2 col-form-label">Dirección</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['address']"
+                                            class="form-control"
+                                            id="legal-address">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-address').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-address')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-phone').length > 0}">
+                                <label for="legal-phone" class="col-md-2 col-form-label">Teléfono</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['phone']"
+                                            class="form-control"
+                                            id="legal-phone">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-phone').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-phone')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-email').length > 0}">
+                                <label for="legal-email" class="col-md-2 col-form-label">Correo</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['email']"
+                                            class="form-control"
+                                            id="legal-email">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-email').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-email')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'tags').length > 0}">
+                                <label for="budget-mount" class="col-md-2 col-form-label" >Presupuesto Mensual</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['budget']['mount']"
+                                            class="form-control"
+                                            type="number"
+                                            min="0"
+                                            id="budget-mount">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'budget-mount').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'budget-mount')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12 col-form-label">
+                                    <input
+                                            [(ngModel)]="alliance['budget']['block']"
+                                            [checked]="alliance['budget']['block']"
+                                            type="checkbox"
+                                            value="1">
+                                    Bloquear peticiones cuando se exceda el presupuesto
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Representante Legal</li>
+                    </ul>
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-name_representative').length > 0}">
+                                <label for="legal-name_representative" class="col-md-2 col-form-label">Nombre</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['name_representative']"
+                                            class="form-control"
+                                            id="legal-name_representative">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-name_representative').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-name_representative')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-phone_representative').length > 0}">
+                                <label for="legal-phone_representative" class="col-md-2 col-form-label">Teléfono</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['phone_representative']"
+                                            class="form-control"
+                                            id="legal-phone_representative">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-phone_representative').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-phone_representative')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-document_type_representative').length > 0}">
+                                <label for="legal-document_type_representative" class="col-md-2 col-form-label">Tipo de Documento</label>
+                                <div class="col-md-10">
+                                    <select
+                                            [(ngModel)]="alliance['legal']['document_type_representative']"
+                                            class="form-control"
+                                            id="legal-document_type_representative">
+                                        <option value="">
+                                            -- Seleccione un tipo de documento --
+                                        </option>
+                                        <option value="CC">CC</option>
+                                        <option value="CE">CE</option>
+                                        <option value="CE">NIT</option>
+                                    </select>
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-document_type_representative').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-document_type_representative')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-document_number_representative').length > 0}">
+                                <label for="legal-document_number_representative" class="col-md-2 col-form-label">Número de Documento</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['document_number_representative']"
+                                            class="form-control"
+                                            id="legal-document_number_representative">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-document_number_representative').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-document_number_representative')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row"
+                                 [ngClass]="{'has-danger': (adminServices.errors | getErrors:'legal-email_representative').length > 0}">
+                                <label for="legal-email_representative" class="col-md-2 col-form-label">Correo</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="alliance['legal']['email_representative']"
+                                            class="form-control"
+                                            id="legal-email_representative"
+                                            type="email">
+                                    <div class="form-control-feedback"
+                                         *ngIf="(adminServices.errors | getErrors:'legal-email_representative').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'legal-email_representative')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-center">
+                                <button (click)="save()" class="btn btn-outline-primary"><span *ngIf="!edit"><b>Guardar</b></span><span
+                                        *ngIf="edit"><b>Guardar cambios</b></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

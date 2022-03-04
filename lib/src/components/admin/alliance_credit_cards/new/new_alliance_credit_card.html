@@ -1,0 +1,299 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="goToAlliance(alliance_id)">{{alliance_view['legal']['name']}}</a>
+                <a class="breadcrumb-item">Tarjetas de Crédito Corporativas</a>
+                <span class="breadcrumb-item active">Nueva</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div>
+                <h1>Nueva Tarjeta de Crédito Corporativa</h1>
+            </div>
+            <div class="container">
+                <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'credits_cards').length > 0">
+                    <p *ngFor="let e of (adminServices.errors | getErrors:'credits_cards')">
+                        {{e['errorMessage'] | i18n}}
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-block">
+                        <h5>Datos de la tarjeta</h5>
+                        <hr>
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'name').length > 0}">
+                                <label for="name" class="col-md-2 col-form-label" >Nombre</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="credit_card['name']"
+                                            class="form-control"
+                                            type="text"
+                                            id="name">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'name').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'name')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'number').length > 0}">
+                            <label for="number" class="col-md-2 col-form-label" >Número *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['number']"
+                                        class="form-control"
+                                        type="text"
+                                        id="number">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'number').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'number')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'year').length > 0}">
+                            <label for="year" class="col-md-2 col-form-label" >Año de expiración *</label>
+                            <div class="col-md-10">
+                                <select [(ngModel)]="credit_card['year']" class="form-control" name="year" id="year">
+                                    <option *ngFor="let item of years" value="{{item}}">{{item}}</option>
+                                </select>
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'year').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'year')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'month').length > 0}">
+                            <label for="month" class="col-md-2 col-form-label" >Mes de expiración *</label>
+                            <div class="col-md-10">
+                                <select [(ngModel)]="credit_card['month']" class="form-control" name="month" id="month">
+                                    <option *ngFor="let item of months" value="{{item['value']}}">{{item['name']}}</option>
+                                </select>
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'month').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'month')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'cvv').length > 0}">
+                            <label for="cvv" class="col-md-2 col-form-label" >Código de verificación *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['cvv']"
+                                        class="form-control"
+                                        type="password"
+                                        id="cvv">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'cvv').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'cvv')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <h5>Datos del tarjetahabiente</h5>
+                        <hr>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'owner-firstname').length > 0}">
+                            <label for="firstname" class="col-md-2 col-form-label" >Nombres *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['owner']['firstname']"
+                                        class="form-control"
+                                        type="text"
+                                        id="firstname">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'owner-firstname').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'owner-firstname')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'owner-lastname').length > 0}">
+                            <label for="lastname" class="col-md-2 col-form-label" >Apellidos *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['owner']['lastname']"
+                                        class="form-control"
+                                        type="text"
+                                        id="lastname">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'owner-lastname').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'owner-lastname')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'owner-email').length > 0}">
+                            <label for="email" class="col-md-2 col-form-label" >Email *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['owner']['email']"
+                                        class="form-control"
+                                        type="text"
+                                        id="email">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'owner-email').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'owner-email')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'owner-phone').length > 0}">
+                            <label for="phone" class="col-md-2 col-form-label" >Celular *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['owner']['phone']"
+                                        class="form-control"
+                                        type="text"
+                                        id="phone">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'owner-phone').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'owner-phone')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'owner-id_number').length > 0}">
+                            <label for="id_number" class="col-md-2 col-form-label" >Número de identificación *</label>
+                            <div class="col-md-10">
+                                <input
+                                        [(ngModel)]="credit_card['owner']['id_number']"
+                                        class="form-control"
+                                        type="text"
+                                        id="id_number">
+                                <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'owner-id_number').length > 0">
+                                    <p *ngFor="let e of (adminServices.errors | getErrors:'owner-id_number')">
+                                        {{e['errorMessage']}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-inverse">
+                                    <tr class="table-active">
+                                        <th colspan="5">Centros de costos</th>
+                                        <th colspan="2">
+                                            <button (click)="addCostCenterModal()" class="btn btn-outline-success float-right">
+                                                <b>Seleccionar</b>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="5">#</th>
+                                        <th colspan="2" class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let item of credit_card['costs_centers']">
+                                        <td colspan="5">{{item['name']}}</td>
+                                        <td colspan="2" class="text-center">
+                                            <button class="btn btn-outline-danger btn-sm" (click)="removeCostCenterModal(item)"><i class="material-icons">delete_forever</i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <input type="text" name="costs_centers" class="form-control" [hidden]="true" [(ngModel)]="credit_card['costs_centers']" required>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button (click)="save()" [disabled]="processing" class="btn btn-outline-primary"><span><b>{{processing ? 'Creando..':'Crear'}}</b></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="addCostCenterodal" tabindex="-1" role="dialog" aria-labelledby="addCostCenterodal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text"
+                                placeholder="Buscar centro de costo por nombre o tag">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostsCenters()"><b>Buscar</b></button>
+                    </div>
+                </div>
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    El centro de costo ya se encuentra seleccionado.
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>tags</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_costs_centers">
+                            <th scope="row">{{item['_id'] | id}}</th>
+                            <td>
+                                {{item['name']}}
+                            </td>
+                            <td>
+                                {{item['tags'].join(', ')}}
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectCostCenter(item)"><b>Agregar</b></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalDeactivate" tabindex="-1" role="dialog" aria-labelledby="modalDeactivate" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">¿Está seguro que de desea eliminar el centro de costo {{itemModal['name']}}?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    La tarjeta debe tener almenos un centro de costo.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-danger" (click)="removeCostCenter(itemModal)"><b>Eliminar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row col-map">
+        <div class="col-md-5 col-lg-4 col-xl-3">
+            <table class="table-rounded">
+                <tbody>
+                    <tr>
+                        <th>Ir a región (Opcional)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="form-control" id="country_id" (change)="setCenter()" [(ngModel)]="xcenter">
+                                <option value="">
+                                    -- Seleccione una región --
+                                </option>
+                                <option *ngFor="let region of adminServices.list_regions; let x=index" value="{{region['center'][0]}},{{region['center'][1]}}">
+                                    {{region['name']}}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div>
+                <span><b>Nombre</b></span>
+                <input class="form-control w-100" type="text" placeholder="Nombre de la dirección" id="name" [(ngModel)]="address['name']">
+            </div>
+            <table class="table-rounded" *ngFor="let stop of stops; let i = index">
+                <tbody>
+                    <tr>
+                        <th style="font-size: 100%;"><b>{{stop['name']}}</b></th>
+                    </tr>
+                    <tr class="p-0">
+                        <td>
+                            <div id="label_{{i}}" hidden="true">
+                                <span id="label_address_{{i}}"></span>
+                                <button type="button" class="close" (click)="showAutocomplete(i)">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <td class="text-center">
+                        <button class="btn btn-outline-success col-12" (click)="searchDirection()" *ngIf="!stops[0]['ready']">
+                            Agregar Dirección
+                        </button>
+                    </td>
+                </tbody>
+            </table>
+            <button class="btn btn-outline-primary" (click)="addressCreate()"><b>Crear</b></button>
+        </div>
+        <div class="col-md-7 col-lg-8 col-xl-9 col-map">
+            <div id="map-canvas"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="tripNewError" tabindex="-1" role="dialog" aria-labelledby="tripNewError" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{msg_error}}</strong>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Volver</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="searchDirection" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Dirección</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <div class="row m-1">
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-2">
+                            <div class="input-group">
+                                <span class="input-group-addon p-0">
+                                    <select class="custom-select col-12" [(ngModel)]="direction_form['field_1']" id="field_1" required>
+                                        <option value="Calle">Calle</option>
+                                        <option value="Carrera">Carrera</option>
+                                        <option value="Avenida Carrera">Avenida Carrera</option>
+                                        <option value="Avenida Calle">Avenida Calle</option>
+                                        <option value="Circular">Circular</option>
+                                        <option value="Circunvalar">Circunvalar</option>
+                                        <option value="Diagonal">Diagonal</option>
+                                        <option value="Manzana">Manzana</option>
+                                        <option value="Transversal">Transversal</option>
+                                        <option value="Via">Vía</option>
+                                    </select>
+                                </span>
+                                <input type="text" class="form-control" [(ngModel)]="direction_form['field_2']" id="field_2" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-2">
+                            <div class="input-group">
+                                <span class="input-group-addon">#</span>
+                                <input type="text" class="form-control" [(ngModel)]="direction_form['field_3']" id="field_3" required>
+                            </div>
+<!--                            <div [hidden]="field_3.valid || field_3.pristine" class="invalid-feedback">-->
+<!--                                Campo requerido.-->
+<!--                            </div>-->
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-2">
+                            <div class="input-group">
+                                <span class="input-group-addon">-</span>
+                                <input type="text" class="form-control" [(ngModel)]="direction_form['field_4']" id="field_4" required>
+                            </div>
+<!--                            <div [hidden]="field_4.valid || field_4.pristine" class="invalid-feedback">-->
+<!--                                Campo requerido.-->
+<!--                            </div>-->
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6 p-2">
+                            <input type="text" class="form-control col-12 w-100" placeholder="Barrio (opcional)" [(ngModel)]="direction_form['field_5']"
+                                   id="field_5">
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6 p-2">
+                            <input type="text" class="form-control col-12 w-100" placeholder="Ciudad/Municipio (obligatorio)" [(ngModel)]="direction_form['field_6']"
+                                   id="field_6" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col"></div>
+                        <div class="col text-center">
+                            <button type="button" class="btn btn-primary" (click)="searchDirectionRequest()"><b>Buscar</b></button>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+
+                <div class="table-responsive table-hover table-bordered">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Dirección</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let itemModal of list_directions" class="c-pointer p2">
+                                <td (click)="selectItem(itemModal)">
+                                    {{itemModal['formatted_address']}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

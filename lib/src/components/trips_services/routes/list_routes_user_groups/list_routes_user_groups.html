@@ -1,0 +1,873 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item" [routerLink]="goToListTrips('all')">Vuelos</a>
+                <span class="breadcrumb-item active">Lista de solicitud masiva de rutas</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+                <p *ngFor="let e of adminServices.errors">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+                            <p *ngFor="let e of adminServices.errors">
+                                {{e['errorMessage']}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h2><b>Parámetros de busqueda</b></h2>
+                            </div>
+                            <div class="row col-sm-12">
+                                <div class="col-sm-3">
+                                    <p class="clear"><b>Grupos desde:</b></p>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p class="clear"><b>Grupos hasta:</b></p>
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-3">-->
+                                <!--<p class="clear"><b>Grupos desde:</b></p>-->
+                            <!--</div>-->
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select [(ngModel)]="month_from" (change)="changeFrom()" class="form-control"
+                                                name="month_from" id="month_from">
+                                            <option *ngFor="let item of months" value="{{item['v']}}">{{item['name']}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select id="day_from" [(ngModel)]="day_from" class="form-control" name="day_from">
+                                            <option *ngFor="let day_i of daysFrom" value="{{day_i}}">{{day_i}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select [(ngModel)]="year" class="form-control" name="year" id="year">
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2022">2022</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-3">-->
+                                <!--<p class="clear"><b>Grupos hasta:</b></p>-->
+                            <!--</div>-->
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select [(ngModel)]="month_to" (change)="changeTo()" class="form-control" name="month_to"
+                                                id="month_to">
+                                            <option *ngFor="let item of months" value="{{item['v']}}">{{item['name']}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select id="day_to" [(ngModel)]="day_to" class="form-control" name="day_to">
+                                            <option *ngFor="let day_i of daysTo" value="{{day_i}}">{{day_i}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4 col-xs-5 float-left">
+                                        <select [(ngModel)]="year" class="form-control" name="year" id="year-to">
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2022">2022</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <div class="col-3">
+                                <div *ngIf="!costcenter_item.containsKey('_id')" class="form-group">
+                                    <button (click)="selectCostCenterModal()" type="button" class="btn btn-outline-success btn-block">
+                                        <b>Centro de costo</b>
+                                    </button>
+                                </div>
+                                <div *ngIf="costcenter_item.containsKey('_id')" class="data-search">
+                                    <div class="title">Centro de costos</div>
+                                    <div>
+                                        <div class="delete-data">
+                                            <button class="btn btn-danger btn-sm float-right" (click)="deleteThis('costcenter')">
+                                                <i class="material-icons delete">
+                                                    cancel
+                                                </i>
+                                            </button>
+                                        </div>
+                                        <!--{{costcenter_item['_id']}} {{costcenter_item['name']}}-->
+                                    </div>
+                                    <div>
+                                        {{costcenter_item['alliance_father_id']['legal']['name']}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-3">
+                                <div *ngIf="!passenger_item.containsKey('_id')" class="form-group">
+                                    <div *ngIf="admin">
+                                        <button (click)="selectPassengersModal()" class="btn btn-outline-success btn-block">
+                                            <b>Pasajero</b>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div *ngIf="passenger_item.containsKey('_id')" class="data-search">
+                                    <div class="title">Pasajero</div>
+                                    <!--<img [src]="passenger_item['personal_info']['image']"-->
+                                         <!--alt="{{passenger_item['personal_info']['firstname']}}"-->
+                                         <!--class="img-map border profile-image rounded">-->
+
+                                    <div class="delete-data">
+                                        <button class="btn btn-danger btn-sm float-right" (click)="deleteThis('passenger')">
+                                            <i class="material-icons delete">
+                                                cancel
+                                            </i>
+                                        </button>
+                                    </div>
+                                    <div>{{passenger_item['personal_info']['firstname']}}
+                                        {{passenger_item['personal_info']['lastname']}}
+                                    </div>
+                                    <!--<div>{{passenger_item['email']}}</div>-->
+                                </div>
+                            </div>
+
+                            <div class="col-3">
+                                <div class="form-group" *ngIf="!alliance_item.containsKey('_id')">
+
+                                    <div *ngIf="admin">
+                                        <button (click)="selectAllianceModal()" class="btn btn-outline-success btn-block">
+                                            <b>Alianza</b>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div *ngIf="alliance_item.containsKey('_id')" class="data-search">
+                                    <div class="title">Alianza</div>
+                                    <div class="delete-data">
+                                        <button class="btn btn-danger btn-sm float-right" (click)="deleteThis('alliance')">
+                                            <i class="material-icons delete">
+                                                cancel
+                                            </i>
+                                        </button>
+                                    </div>
+                                    <div>{{alliance_item['legal']['name']}}</div>
+                                    <!--<div>{{alliance_item['legal']['email']}}</div>-->
+                                    <!--<div>{{alliance_item['legal']['email_representative']}}</div>-->
+                                </div>
+                            </div>
+                        <!--</div>-->
+
+                        <div class="col-3">
+                            <div class="form-group">
+                                <select
+                                        [(ngModel)]="type_route"
+                                        class="form-control"
+                                >
+                                    <option value="">Tipo de Ruta (Todas)</option>
+                                    <option value="oneforall">Origen Común</option>
+                                    <option value="allforone">Destino Común</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <select
+                                        [(ngModel)]="status"
+                                        class="form-control"
+                                >
+                                    <option value="">Estado (Todos)</option>
+                                    <option value="grouped,not_grouped">Agrupados/No Agrupados</option>
+                                    <option value="not_grouped">No Agrupados</option>
+                                    <option value="grouped">Agrupados</option>
+                                    <option value="archived">Archivados</option>
+                                    <option value="requested">Rutas Creadas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-outline-info btn-block" (click)="searchGroups(1)">
+                                        <b> Buscar Grupos de Usuarios </b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3" *ngIf="user['routes_report'] != null">
+                            <button type="button" [disabled]="generate" class="btn btn-outline-success btn-block"
+                                    (click)="modalDowmload()">
+                                <span *ngIf="user['routes_report']['percent'] != null && (user['routes_report']['percent'] == 0 || user['routes_report']['percent'] == 100)"><b>Generar Reporte</b></span>
+                                <span *ngIf="user['routes_report']['percent'] != null && user['routes_report']['percent'] > 0 && user['routes_report']['percent'] < 100"><b>Generando - {{user['routes_report']['percent'].round()}}%</b></span>
+                            </button>
+                        </div>
+                        <div class="col-3" *ngIf="download">
+                            <a *ngIf="download" href="{{user['routes_report']['file_url']}}"
+                               title="Descargar último reporte generado"
+                               class="btn btn-outline-info btn-block" target="_blank" (click)="download=false"><b>Descargar</b>
+                            </a>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-12" style="margin-top: 10px">
+                        <div>
+                            <h2><b>Lista de grupos de usuarios para solicitar rutas</b></h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered table-hover">
+                                <thead class="thead-inverse">
+                                <tr style="border:#00cc99 2px solid;">
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Dirección Común</th>
+                                    <th class="text-center">Tipo de Ruta</th>
+                                    <th class="text-center">Pasajeros</th>
+                                    <th class="text-center">Alianza - Centros de Costo</th>
+                                    <th class="text-center"><i class="material-icons">settings</i></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let item of adminServices.list_recommendeds; let i=index" style="border:#00cc99 2px solid;">
+                                    <td *ngIf="item['_id'] != null">
+                                        {{item['_id']}}
+                                    </td>
+                                    <td *ngIf="item['alliance_address'] != null">
+                                        {{item['alliance_address']['address']}}
+                                    </td>
+                                    <td *ngIf="item['type_route'] != null">
+                                        <span *ngIf="item['type_route']=='oneforall'"><strong>Salida</strong></span>
+                                        <span *ngIf="item['type_route']=='allforone'"><strong>Llegada</strong></span><br>
+                                        <span class="">{{item['date'] | dateformat}}
+                                            <button class="btn-outline-info btn-sm" type="submit" (click)="changeDateModal(item)"><i class="material-icons icon-in-button">update</i></button>
+                                        </span>
+                                    </td>
+                                    <td *ngIf="item['passengers'].length>0">
+                                        <div *ngFor="let p of item['passengers']">
+                                            {{p['passenger_id']['personal_info']['firstname']}} {{p['passenger_id']['personal_info']['lastname']}}<br>
+                                            {{p['passenger_id']['email']}}<br>
+                                            {{p['address']['address']}}
+                                            <hr/>
+                                        </div>
+                                        <button class="btn btn-outline-primary col-12" (click)="passengersUpdateModal(item)" *ngIf="item['status']!='requested' && item['status']!='archived'"><b>Editar</b></button>
+                                    </td>
+                                    <td>
+                                        Alianza: {{item['alliance_id']['legal']['name']}}
+                                        <hr/>
+                                        Centro de Costos: {{item['cost_center_id']['name']}}
+                                    </td>
+                                    <td class="text-center">
+                                        <span *ngIf="item['status']=='requested' && item['trip__status']==false" style="margin-top: 10px">
+                                            <b><span class="text-success">¡Ruta Creada!</span> <br>
+                                                <span>Vuelo: <a [routerLink]="goToViewEditTrip(item['trip_id']['_id'])">{{item['trip_id']['_id'] | id}}</a></span><br>
+                                                <span *ngIf="item['car_info']==null">Vehículo: <span class="text-danger">No tiene vehículo asignado.</span></span><br>
+                                                <span *ngIf="item['car_info']!=null">Vehículo: {{item['car_info']['brand']}}-{{item['car_info']['model']}}</span><br>
+                                                <span *ngIf="item['car_info']!=null">Placa: <span class="text-danger">{{item['car_info']['plate']}}</span></span><br>
+                                            </b>
+                                        </span>
+                                        <button class="btn btn-outline-primary col-12" *ngIf="item['status']=='requested' && item['trip__status']==false" [disabled]="!item['trip__status']" style="margin-top: 10px">
+                                            <span *ngIf="item['trip_id']['status']=='created'" class="text-info"><b>Reserva Aceptada</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='finding'" class="text-warning"><b>Reserva Aceptada</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='reserving'" class="text-warning"><b>Reserva Aceptada</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='reserved'" class="text-primary"><b>Reservado</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='onWay'" class="text-primary"><b>En Camino</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='near'" class="text-primary"><b>En Camino, Cerca</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='arrived'" class="text-primary"><b>En Camino, Arrivó</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='starting'" class="text-danger"><b>En Camino</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='started'" class="text-primary"><b>Iniciado</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='finished'" class="text-success"><b>Finalizado</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='normalized'" class="text-success"><b>Finalizado</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='cancelled'" class="text-danger"><b>Cancelado</b></span>
+                                            <span *ngIf="item['trip_id']['status']=='unattended'" class="text-danger"><b>Sin Atender</b></span>
+                                        </button>
+                                        <button class="btn btn-outline-primary col-12" (click)="newTripPost(item)" style="margin-top: 10px" *ngIf="item['status']!='requested' && item['status']!='not_grouped' && item['status']!='archived'" [disabled]="block">
+                                            <b>Solicitar Ruta</b>
+                                        </button>
+                                        <br>
+                                        <button class="btn btn-outline-info col-12" (click)="previewModal(item)" style="margin-top: 10px" *ngIf="item['status']!='requested' && item['status']!='archived'" [disabled]="block">
+                                            <b>Previsualizar</b>
+                                        </button>
+                                        <button class="btn btn-outline-danger col-12" (click)="archivedModal(item['_id'])" style="margin-top: 10px"  *ngIf="item['status']!='requested' && item['status']!='archived'" [disabled]="block">
+                                            <b>Archivar</b>
+                                        </button>
+                                        <span *ngIf="item['status']=='archived'" class="text-warning" style="margin-top: 10px"><b>¡Este grupo ha sido archivado!</b></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <ul class="pagination justify-content-center" *ngIf="adminServices.count_recommendeds.length>0">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link hand" tabindex="-1" (click)="searchGroups(1)">&laquo;</a>
+                                </li>
+                                <li class="page-item" *ngFor="let item of adminServices.count_recommendeds" [ngClass]="{active: item == n}">
+                                    <a *ngIf="item > n - 5 && item < n + 5" class="page-link hand" (click)="searchGroups(item)">{{item}}</a></li>
+                                <li class="page-item">
+                                    <a class="page-link hand" (click)="searchGroups(adminServices.count_recommendeds.length)">&raquo;</a>
+                                </li>
+                            </ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal-->
+
+<div class="modal" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModal" aria-hidden="true">
+    <div class="modal-dialog modal-xlg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div id="map-canvas"></div>
+                        <button class="btn btn-outline-primary col-12" (click)="passengersUpdateModal(group)" *ngIf="group['status']!='requested' && group['status']!='archived'">
+                            <b>Editar</b>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="row col-12 p-0">
+                            <h1 class="col-11"><b>Detalle de la Ruta</b></h1>
+                            <button type="button" class="close float-right col-1" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true"><b><h1>x</h1></b></span>
+                            </button>
+                        </span>
+                        <span class="row col-12 p-0">
+                            <span class="col-6"><b>Tipo de Ruta</b></span>
+                            <span class="col-6"><b>Fecha y Hora</b></span>
+                        </span>
+                        <span class="row col-12 p-0" style="margin-bottom: 10px">
+                            <span class="col-6" *ngIf="group['type_route']=='oneforall'">Salida</span>
+                            <span class="col-6" *ngIf="group['type_route']=='allforone'">Entrada</span>
+                            <span class="col-6">{{group['date']| dateformat}}</span>
+                        </span>
+                        <div class="table-responsive" *ngIf="estimate!=null" style="margin-bottom:15px">
+                            <table class="table table-sm">
+                                <thead class="thead-inverse">
+                                <tr>
+                                    <th>Pasajeros</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngIf="estimate.containsKey('passengers')">
+                                <tr *ngIf="estimate['passengers'].length>0">
+                                    <td class="col-12">
+                                        <div *ngFor="let itemModal of estimate['passengers']">
+                                            <div  [ngClass]="{'shadow-class-passenger': itemModal['passenger_id']['_id'] == shadow_passenger}">
+                                                {{itemModal['name']}}<br>
+                                                {{itemModal['passenger_id']['email']}}<br>
+                                                {{itemModal['passenger_id']['personal_info']['phone']}}<br>
+                                                {{itemModal['pickup_address']}}<br>
+                                            </div>
+                                            <hr/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm">
+                                <thead class="thead-inverse">
+                                <tr>
+                                    <th>Tiempo</th>
+                                    <th>Distancia</th>
+                                    <th>Tarifa</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngIf="estimate['passengers'].length>0">
+                                    <td class="trcenter">{{estimate['time']}} min.</td>
+                                    <td class="trcenter">{{estimate['distance']/1000}} Km.</td>
+                                    <td class="trcenter">{{estimate['price']['total'] | money}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="estimate!=null">
+                            <button class="btn btn-outline-primary col-12" (click)="preload()" [disabled]="block">
+                                <b>Solicitar Ruta</b>
+                            </button>
+                            <button class="btn btn-outline-info col-12" [routerLink]="goToNewRoute(passengers_group)" data-dismiss="modal" style="margin-top: 10px" *ngIf="group['status']=='not_grouped'" [disabled]="block">
+                                <b>Solicitar Manualmente</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-12">-->
+                    <!--<div *ngFor="let itemWords of wordsOptions" class="col-lg-6 col-sm-12 float-left">-->
+                        <!--<label class="btn btn-primary btn-block">-->
+                            <!--<input type="checkbox" [(ngModel)]="itemWords['v']" class="hidden">-->
+                            <!--<span></span>-->
+                            <!--<b>{{itemWords['name']}}</b>-->
+                        <!--</label>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+            <!--<div class="modal-footer">-->
+                <!--&lt;!&ndash;<div class="float-left col-sm-6 text">&ndash;&gt;-->
+                    <!--&lt;!&ndash;Presione descargar para continuar.&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--<div class="col-sm-6 float-right">-->
+                    <!--<button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Salir</b></button>-->
+                    <!--&lt;!&ndash;<button type="button" class="btn btn-outline-warning" (click)="generateFile()"><b>Descargar</b></button>&ndash;&gt;-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="changeDateModal" tabindex="-1" role="dialog" aria-labelledby="changeDateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar Grupo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="datetime-local" [(ngModel)]="update" min="DateTime.now()" class="form-control"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" (click)="updateDateGroup()" data-dismiss="modal"><b>Guardar Cambios</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="archivedModal" tabindex="-1" role="dialog" aria-labelledby="archivedModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="archived_id != ''">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">Archivar grupo '{{archived_id | id}}'</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" (click)="archived()"><b>Archivar Grupo</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal trip view-->
+
+<div class="modal" id="viewTripModal" tabindex="-1" role="dialog" aria-labelledby="viewTripModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vuelo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-12" *ngIf="current_trip!=''">
+                        ¡Se ha creado el vuelo <a [routerLink]="goToViewEditTrip(current_trip)">{{current_trip | id}}</a> exitosamente.
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cerrar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal passenger-->
+
+<div class="modal" id="PassengersModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Pasajero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="passenger_q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchPassagers()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre / Email</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let itemModal of adminServices.list_users">
+                            <td *ngIf="itemModal['personal_info'] != null"><img [src]="itemModal['personal_info']['image']"
+                                     alt="{{itemModal['personal_info']['firstname']}}"
+                                     class="img-map border profile-image rounded"></td>
+                            <td *ngIf="itemModal['personal_info'] != null">
+                                <div>{{itemModal['personal_info']['firstname']}}
+                                    {{itemModal['personal_info']['lastname']}}
+                                </div>
+                                <div>{{itemModal['email']}}</div>
+                            </td>
+                            <td>
+                                <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary"
+                                        (click)="selectItem(itemModal, 'passengers')"><b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal alliance-->
+
+<div class="modal" id="AllianceModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Allianza</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="list_Alliances_child.length > 0">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <input
+                                    [(ngModel)]="alliance_q"
+                                    class="form-control"
+                                    type="text">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-primary" (click)="searchAlliance()"><b>Buscar</b></button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr>
+
+                                <th>Nombre Legal</th>
+                                <th>Email/Email Representante</th>
+                                <th>Estado</th>
+                                <th class="text-center">
+                                    <i class="material-icons">settings</i>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let itemModal of list_Alliances_child">
+
+                                <td>
+                                    <div>{{itemModal['legal']['name']}}</div>
+                                </td>
+                                <td>
+                                    <div>{{itemModal['legal']['email']}}</div>
+                                    <div>{{itemModal['legal']['email_representative']}}</div>
+                                </td>
+
+                                <td>
+                                    <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                    <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-outline-primary"
+                                            (click)="selectItem(itemModal, 'alliance')"><b>Seleccionar</b>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal cost center-->
+
+<div class="modal" id="CostCenter2Modal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="costcenter_q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostCenter()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Alianza padre</th>
+                            <th>Estado</th>
+                            <th class="text-center">
+                                <i class="material-icons">settings</i>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let itemModal of adminServices.list_costs_centers">
+
+                            <td>
+                                {{itemModal['_id']| id}}
+                            </td>
+                            <td>
+                                {{itemModal['name']}}
+                            </td>
+                            <td>
+                                {{itemModal['alliance_father_id']['legal']['name']}}
+                            </td>
+
+                            <td>
+                                <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary"
+                                        (click)="selectItem(itemModal, 'costcenter')"><b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="tripNewError" tabindex="-1" role="dialog" aria-labelledby="tripNewError" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{msg_error}}</strong></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" (click)="block=false"><b>Volver</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal-->
+
+<div class="modal" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="deactivateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> Descargar Lista de Rutas Activas </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 15px">
+                    Seleccione las columnas que tendrá su lista de rutas.
+                </div>
+                <div class="text-warning alert alert-warning">
+                    Se enviárá un link de descarga al correo y se descargará automáticamente en el dispositivo actual, en caso de no ser asi, podrá hacer click en el botón descargar que aparecerá tan pronto el listado se haya generado.
+                </div>
+                <div class="col-12">
+                    <div *ngFor="let itemWords of wordsOptions" class="col-lg-6 col-sm-12 float-left">
+                        <label class="btn btn-primary btn-block">
+                            <input type="checkbox" [(ngModel)]="itemWords['v']" class="hidden">
+                            <span></span>
+                            <b>{{itemWords['name']}}</b>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="float-left col-sm-6 text">
+                    Presione descargar para continuar.
+                </div>
+                <div class="col-sm-6 float-right">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Salir</b></button>
+                    <button type="button" class="btn btn-outline-warning" (click)="generateFile()"><b>Descargar</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal update passenger-->
+
+<div class="modal" id="passengersUpdateModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Pasajeros</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid down-space">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr class="col-12">
+                                <th colspan="12">Editar Usuarios</th>
+                            </tr>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre / Email</th>
+                                <th class="text-center"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let itemModal of group_id['passengers']">
+                                <td><img [src]="itemModal['passenger_id']['personal_info']['image']"
+                                         alt="{{itemModal['passenger_id']['personal_info']['firstname']}}"
+                                         class="img-map border profile-image rounded"></td>
+                                <td>
+                                    <div>{{itemModal['passenger_id']['personal_info']['firstname']}}
+                                        {{itemModal['passenger_id']['personal_info']['lastname']}}
+                                    </div>
+                                    <div>{{itemModal['passenger_id']['email']}}</div>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                            (click)="removePassenger(itemModal)" title="Eliminar"><i class="material-icons">delete_forever</i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-3 text-center" style="max-width: none">
+                        <button type="button" class="btn btn-outline-info" (click)="updatePassengers()"><b>Guardar Cambios</b></button>
+                    </div>
+                </div>
+                <div class="container-fluid up-space">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <input
+                                    placeholder="Buscar usuario que desea agregar..."
+                                    [(ngModel)]="passenger_q"
+                                    class="form-control"
+                                    type="text">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-primary" (click)="searchPassagers()"><b>Buscar</b></button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr class="col-12">
+                                <th colspan="12">Agregar Usuario</th>
+                            </tr>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre / Email</th>
+                                <th>Estado</th>
+                                <th class="text-center"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let addItem of adminServices.list_users">
+                                <td><img [src]="addItem['personal_info']['image']"
+                                         alt="{{addItem['personal_info']['firstname']}}"
+                                         class="img-map border profile-image rounded"></td>
+                                <td>
+                                    <div>{{addItem['personal_info']['firstname']}}
+                                        {{addItem['personal_info']['lastname']}}
+                                    </div>
+                                    <div>{{addItem['email']}}</div>
+                                </td>
+                                <td>
+                                    <span *ngIf="addItem['active']" class="text-success"><b>Activo</b></span>
+                                    <span *ngIf="!addItem['active']" class="text-danger"><b>Inactivo</b></span>
+                                </td>
+                                <td class="text-center">
+                                    <span *ngIf="addItem['routes']!=null">
+                                        <button type="button" class="btn btn-outline-primary" *ngIf="addItem['routes'].length>0"
+                                                (click)="addPassenger(addItem)"><b>Agregar</b>
+                                        </button>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

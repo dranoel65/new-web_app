@@ -1,0 +1,14 @@
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+
+    display: flex;
+    align-items: center;
+}
+.vertical-center .card{
+    width: 100%;
+}
+.btn-login{
+    padding: 13px;
+    border-radius: 0 15px 0 0;
+}

@@ -1,0 +1,170 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Perfil</a>
+                <span class="breadcrumb-item active">Tarjetas de crédito</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.isNotEmpty">
+                <p *ngFor="let e of adminServices.errors">
+                    {{e['errorMessage'] | i18n}}
+                </p>
+            </div>
+            <div>
+                <h1>Tarjetas de crédito</h1>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-8">
+                    <div class="form-group">
+                        <input type="text" [(ngModel)]="q" class="form-control" placeholder="Buscar por número o tipo"/>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <button type="button" class="btn btn-outline-info btn-block" (click)="searchCreditCard()"><b>Buscar</b></button>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <button type="button" class="btn btn-outline-info btn-success" [routerLink]="goToAddPersonalCreditCard(user['_id'])"><b>Agregar</b></button>
+                </div>
+
+                <div class="col-md-12 table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>#</th>
+                            <th>Número</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha de <br>Creación</th>
+                            <th>Fecha de <br>Actualización</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_credits_cards">
+                            <th scope="row">{{item['_id']| id}}</th>
+                            <td>
+                                {{item['number']}}
+                                <span *ngIf="item['_id'] == user['credit_card_id']" class="badge bg-info">(actual)</span>
+                            </td>
+                            <td>{{item['type']}}</td>
+                            <td>
+                                <span *ngIf="!item['is_blocked']" class="text-success">Desbloqueada</span>
+                                <span *ngIf="item['is_blocked']" class="text-danger">Bloqueada</span>
+                            </td>
+                            <td>{{item['createdAt'] | dateformat}}</td>
+                            <td>{{item['updatedAt'] | dateformat}}</td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-danger btn-sm" (click)="deactivate(item)">
+                                    <i class="material-icons" title="Eliminar">delete_forever</i>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm" (click)="showVerification(item)">
+                                    <i class="material-icons" title="Ver verificación">toc</i>
+                                </button>
+                                <button  *ngIf="item['_id'] != user['credit_card_id'] && !item['is_blocked']" class="btn btn-outline-success btn-sm" (click)="selectModal(item)">
+                                    <i class="material-icons" title="Seleccionar">done</i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modalDeactivate" tabindex="-1" role="dialog" aria-labelledby="modalDeactivate" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">¿Está seguro que de desea eliminar la tarjeta {{itemModal['number']}}?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    No puedes eliminar la tarjeta porque el usuario debe tener almenos una activa.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-danger" (click)="remove(itemModal)"><b>Eliminar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalSelectCard" tabindex="-1" role="dialog" aria-labelledby="modalSelectCard" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Está seguro que de desea seleccionar la tarjeta {{itemModal['number']}}?</h5>
+                <button type="button" [disabled]="processing" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    No puedes seleccionar una tarjeta bloqueada.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" [disabled]="processing" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-danger" [disabled]="processing" (click)="select(itemModal)"><b>Seleccionar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="showVerification" tabindex="-1" role="dialog" aria-labelledby="showVerification" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title">Verificación de {{itemModal['number']}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tr>
+                        <th scope="row">Estado de la transacción</th>
+                        <td>{{itemModal['verification']['status']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Código de respuesta</th>
+                        <td>{{itemModal['verification']['response_code']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Mensaje de error</th>
+                        <td>{{itemModal['verification']['message']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Valor</th>
+                        <td>$ {{itemModal['verification']['value']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Referencia</th>
+                        <td>{{itemModal['verification']['reference_code']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Id de la orden</th>
+                        <td>{{itemModal['verification']['order_id']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Fecha</th>
+                        <td>{{itemModal['verification']['date'] | dateformat}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cerrar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

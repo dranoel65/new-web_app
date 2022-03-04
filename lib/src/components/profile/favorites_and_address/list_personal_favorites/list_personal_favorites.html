@@ -1,0 +1,141 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'errorAny').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'errorAny')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <sel-menu_overview></sel-menu_overview>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Favoritos Personales </h3>
+                </div>
+                <div class="card-block">
+                    <div>
+                        <a class="btn btn-outline-primary float-right" [routerLink]="RoutePaths.add_personal_and_alliance_favorite.toUrl()"><b>Agregar</b></a>
+                    </div>
+                    <div class="table table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Direccion Inicial</th>
+                                <th>Direccion Final</th>
+                                <th class="text-center"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody *ngFor="let item of adminServices.list_favorites">
+                            <tr *ngIf="item['alliance_id']==null">
+                                <td>{{item['name']}}</td>
+                                <td>{{item['start']['address']}}</td>
+                                <td>{{item['end']['address']}}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-danger btn-sm"><i class="material-icons" (click)="deactivateModal(item)">clear</i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Favoritos Corporativos </h3>
+                </div>
+                <div class="card-block">
+                    <div class="table table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Direccion Inicial</th>
+                                <th>Direccion Final</th>
+                                <th class="text-center" *ngIf="user['type_user']=='admin'"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody *ngFor="let item of adminServices.list_favorites">
+                            <tr *ngIf="item['alliance_id']!=null">
+                                <td>{{item['name']}}</td>
+                                <td>{{item['start']['address']}}</td>
+                                <td>{{item['end']['address']}}</td>
+                                <td class="text-center" *ngIf="user['type_user']=='admin'">
+                                    <button class="btn btn-outline-danger btn-sm"><i class="material-icons" (click)="deactivateModal(item)">clear</i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="user['alliance_id']['routes_active']">
+                <div class="card-header">
+                    <h3>Direcciones</h3>
+                </div>
+                <div class="card-block">
+                    <div>
+                        <a class="btn btn-outline-primary float-right" [routerLink]="goToAddPersonalAddress(user['_id'])"><b>Agregar</b></a>
+                    </div>
+                    <div class="table table-responsive" *ngIf="adminServices.list_users.length>0">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Nombre</th>
+                                <th>Direccion</th>
+                                <th class="text-center" *ngIf="user['type_user']=='admin'"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody *ngFor="let item of adminServices.list_users[0]['routes']">
+                            <tr>
+                                <td class="text-center"><i class="material-icons">settings</i></td>
+                                <td>{{item['name']}}</td>
+                                <td>{{item['address']}}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-danger btn-sm"><i class="material-icons" (click)="deleteModal(item)">clear</i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalDeactivate" tabindex="-1" role="dialog" aria-labelledby="deactivateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="item != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">Desea eliminar '{{item['name']}}'</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" (click)="deactivate(item['_id'])"><b>Eliminar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDelete" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="item != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal">Desea eliminar '{{item['name']}}'</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" (click)="delete(item)"><b>Eliminar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

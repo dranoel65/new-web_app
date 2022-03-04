@@ -1,0 +1,349 @@
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+            <p *ngFor="let e of adminServices.errors">
+                {{e['errorMessage']}}
+            </p>
+        </div>
+        <div class="alert alert-success" id="susessAlert" role="alert" *ngIf="flagSuccess">
+            Actualización realizada
+        </div>
+        <div class="alert alert-danger" id="errorAlert" role="alert" *ngIf="errorCargar!=''">
+            {{errorCargar}}
+        </div>
+
+    </div>
+    <div class="col-12">
+        <div>
+            <div class="row margin-row" *ngIf="alliance_id!=null">
+                <div class="col-md-12">
+                    <a class="btn btn-outline-primary btn-sm" [routerLink]="goToNewUser(alliance_id)"><b>Nuevo Usuario </b><i class="material-icons  icon-in-button">insert_drive_file</i></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input
+                                [(ngModel)]="m['firstname']"
+                                class="form-control"
+                                type="text"
+                                placeholder="Nombres...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input
+                                [(ngModel)]="m['lastname']"
+                                class="form-control"
+                                type="text"
+                                placeholder="Apellidos...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div *ngIf="!costcenter_item.containsKey('_id')" class="form-group">
+                        <button (click)="selectCostCenterModal2()" class="btn btn-outline-success btn-block" type="button">
+                            <b>Seleccionar Centro de costo</b>
+                        </button>
+                    </div>
+                    <div *ngIf="costcenter_item.containsKey('_id')" class="data-search">
+                        <div class="title">Centro de costos</div>
+                        <div>
+                            <div class="delete-data">
+                                <button class="btn btn-danger btn-sm float-right" (click)="costcenter_item = {}">
+                                    <i class="material-icons delete">
+                                        cancel
+                                    </i>
+                                </button>
+                            </div>
+                            {{costcenter_item['name']}}
+                        </div>
+                        <div>
+                            {{costcenter_item['alliance_father_id']['legal']['name']}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input
+                                [(ngModel)]="m['all']"
+                                class="form-control"
+                                type="text"
+                                placeholder="Buscar usuario por: id, correo, identificación o número célular...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" [(ngModel)]="type_user">
+                            <option value="">
+                                Rol (Todos)
+                            </option>
+                            <option value="admin">
+                                Administrador
+                            </option>
+                            <option value="supervisor">
+                                Supervisor
+                            </option>
+                            <option value="beneficiary">
+                                Beneficiario
+                            </option>
+                            <option value="user">
+                                Usuario
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" [(ngModel)]="active">
+                            <option value="1">
+                                Activos
+                            </option>
+                            <option value="0">
+                                Suspendidos
+                            </option>
+                            <option value="">
+                                Todos
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-info btn-block" (click)="searchUsers(n)"><b>Buscar</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="usersForBulk.length>0" class="col-12">
+        <div class="row">
+            <div class="col-7"></div>
+            <div class="form-group col-3">
+                <select [(ngModel)]="alliance['_id']" class="form-control">
+                    <option value="">
+                        -- Seleccionar Sub Alianza --
+                    </option>
+                    <option *ngFor="let alliance of adminServices.list_alliances" value="{{alliance['_id']}}">
+                        {{alliance['legal']['name']}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-info btn-sm btn-block" (click)="bulkUpdate()">Mover usuarios <i class="material-icons  icon-in-button">update</i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <ul class="pagination justify-content-right" *ngIf="adminServices.count_users.length>0">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link hand" tabindex="-1" (click)="searchUsers(1)">&laquo;</a>
+                </li>
+                <li class="page-item" *ngFor="let item of adminServices.count_users" [ngClass]="{active: item == n}">
+                    <a *ngIf="item > n - 5 && item < n + 5" class="page-link hand" (click)="searchUsers(item)">{{item}}</a></li>
+                <li class="page-item">
+                    <a class="page-link hand" (click)="searchUsers(adminServices.count_users.length)">&raquo;</a>
+                </li>
+            </ul>
+        </ul>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="thead-inverse">
+                <tr>
+                    <th class="text-center"><i class="material-icons">check</i></th>
+                    <th>#</th>
+                    <th>Correo</th>
+                    <th>Nombre</th>
+                    <th>Célular</th>
+                    <th>
+                        Centros de Costos
+                        <span *ngIf="!show_all" class="badge badge-primary hand" (click)="show_all=!show_all">(ver todo)</span>
+                        <span *ngIf="show_all" class="badge badge-primary hand" (click)="show_all=!show_all">(ocultar)</span>
+                    </th>
+                    <th>Rol</th>
+                    <th>Presupuesto</th>
+                    <th>Consumo</th>
+                    <th>Estado</th>
+                    <th class="text-center"><i class="material-icons">settings</i></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of adminServices.list_users">
+                    <th class="text-center" *ngIf="item != null">
+                        <input type="checkbox" (click)="addUserForBulk(item['_id'])">
+                    </th>
+                    <th scope="row" *ngIf="item != null">
+                        <a [routerLink]="goToViewUser(item['_id'])">{{item['_id']| id}}</a>
+                    </th>
+                    <td>{{item['email']}}</td>
+                    <td *ngIf="item['personal_info'] != null">{{item['personal_info']['firstname']}} <strong>{{item['personal_info']['lastname']}}</strong></td>
+                    <td *ngIf="item['personal_info'] != null">{{item['personal_info']['phone']}}</td>
+                    <td *ngIf="item['costs_centers_ids'] != null">
+                        <div *ngIf="item['alliance_id'] != null">
+                            <strong>Alianza:</strong> <a [routerLink]="goToAlliance(item['alliance_id']['_id'])">{{item['alliance_id']['legal']['name']}}</a>
+                        </div>
+                        <div *ngIf="!show_all && (item['costs_centers_ids'].length > 1 || item['costs_centers_ids'].length == 0)">
+                            {{item['costs_centers_ids'].length}} Centros de Costos
+                        </div>
+                        <div *ngIf="!show_all && item['costs_centers_ids'].length == 1">
+                            {{item['costs_centers_ids'].length}} Centro de Costo
+                        </div>
+                        <ul *ngIf="show_all">
+                            <li *ngFor="let item2 of item['costs_centers_ids']">
+                                <span *ngIf="item2 != null && item2['active'] == true">
+                                    {{item2['name']}}
+                                </span>
+                                <span *ngIf="item2 != null && item2['active'] == false" class="red">
+                                    {{item2['name']}}
+                                </span>
+                                <span *ngFor="let tag of item2['tags']" class="badge badge-primary">{{tag}} </span>
+                            </li>
+                        </ul>
+                    </td>
+                    <td *ngIf="item['costs_centers_ids'] == null && item['alliance_id'] != null">
+                        <div>
+                            <strong>Alianza:</strong> <a [routerLink]="goToAlliance(item['alliance_id']['_id'])">{{item['alliance_id']['legal']['name']}}</a>
+                        </div>
+                        0 Centros de Costos
+                    </td>
+                    <td>{{item['type_user'] | i18n}}</td>
+                    <td *ngIf="item.containsKey('budget')">
+                        <div>{{item['budget']['mount'] | currency:'COP':true:'1.0-0'}} <span *ngIf="item['budget']['block']" class="green"><i class="material-icons">lock</i></span></div>
+                    </td>
+                    <td *ngIf="item.containsKey('budget')">
+                        {{item['budget']['price'] | currency:'COP':true:'1.0-0'}}
+                    </td>
+                    <td *ngIf="!item.containsKey('budget')"></td>
+                    <td *ngIf="!item.containsKey('budget')"></td>
+                    <td>
+                        <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                        <span *ngIf="item['active'] == false" class="text-danger"><b>Suspendido</b></span>
+                    </td>
+                    <td class="text-center">
+                        <button *ngIf="item['active']" class="btn btn-outline-danger btn-sm" (click)="deactivateModal(item)"><i class="material-icons">visibility_off</i></button>
+                        <button *ngIf="item['active'] == false" class="btn btn-outline-warning btn-sm" (click)="activateModal(item)"><i class="material-icons">visibility</i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modalDeactivate2" tabindex="-1" role="dialog" aria-labelledby="deactivateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">Desactivar '{{itemModal['personal_info']['firstname']}} {{itemModal['personal_info']['lastname']}}'</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" (click)="deactivate(itemModal['_id'])"><b>Desactivar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalActivate2" tabindex="-1" role="dialog" aria-labelledby="activateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activateModal">Activar '{{itemModal['personal_info']['firstname']}} {{itemModal['personal_info']['lastname']}}'</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" (click)="activate(itemModal['_id'])"><b>Activar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal cost center-->
+<div class="modal" id="CostCenterModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="costcenter_q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostCenter()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Alianza padre</th>
+                            <th>Estado</th>
+                            <th class="text-center">
+                                <i class="material-icons">settings</i>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>N/A</td>
+                            <td><b>Sin centros de costo</b></td>
+                            <td>
+                                N/A
+                            </td>
+                            <!--<td></td>-->
+                            <td>
+                                <span class="text-success"><b>Todos</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectItem({'_id':'all','alliance_father_id':{'legal':{'name':'N/A'}},'name':'Sin centros de costo'})"><b>Seleccionar</b></button>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let itemModal of adminServices.list_costs_centers">
+
+                            <td>
+                                {{itemModal['_id']| id}}
+                            </td>
+                            <td>
+                                {{itemModal['name']}}
+                            </td>
+                            <td>
+                                {{itemModal['alliance_father_id']['legal']['name']}}
+                            </td>
+
+                            <td>
+                                <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectItem(itemModal)"><b>Seleccionar</b></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

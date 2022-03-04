@@ -1,0 +1,162 @@
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+            <p *ngFor="let e of adminServices.errors">
+                {{e['errorMessage'] | i18n}}
+            </p>
+        </div>
+    </div>
+    <div class="col-12">
+        <div>
+            <div class="row margin-row" *ngIf="list_all=='alliance'">
+                <div class="col-md-12">
+                    <a class="btn btn-outline-primary btn-sm" [routerLink]="goToNewCostCenter(alliance_id)"><b>Nuevo Centro de Costo </b><i class="material-icons  icon-in-button">insert_drive_file</i></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <input type="text" [(ngModel)]="q" class="form-control" placeholder="Buscar por nombre o tags"/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" [(ngModel)]="xactive">
+                            <option value="">
+                                Todos los centros de costos
+                            </option>
+                            <option value="1">
+                                Activos
+                            </option>
+                            <option value="0">
+                                Suspendidos
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-info btn-block" (click)="searchCostsCenters(n)"><b>Buscar</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <ul class="pagination justify-content-right" *ngIf="adminServices.count_costs_centers.length>0">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link hand" tabindex="-1" (click)="searchCostsCenters(1)">&laquo;</a>
+                </li>
+                <li class="page-item" *ngFor="let item of adminServices.count_costs_centers" [ngClass]="{active: item == n}">
+                    <a *ngIf="item > n - 5 && item < n + 5" class="page-link hand" (click)="searchCostsCenters(item)">{{item}}</a></li>
+                <li class="page-item">
+                    <a class="page-link hand" (click)="searchCostsCenters(adminServices.count_costs_centers.length)">&raquo;</a>
+                </li>
+            </ul>
+        </ul>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Alianza</th>
+                    <th>Usuarios</th>
+                    <th>Tags</th>
+                    <th>TC</th>
+                    <th>Presupuesto</th>
+                    <th>Consumo</th>
+                    <th>Horarios Permitidos</th>
+                    <th>Estado</th>
+                    <th class="text-center"><i class="material-icons">settings</i></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of adminServices.list_costs_centers">
+                    <th scope="row">
+                        <a title="Editar" [routerLink]="goToEditCostCenter(item['_id'])">{{item['_id']| id}}</a>
+                    </th>
+                    <td>
+                        {{item['name']}}
+                    </td>
+                    <td>
+                        <a [routerLink]="goToViewAlliance(item['alliance_father_id']['_id'])">{{item['alliance_father_id']['legal']['name']}}</a>
+                    </td>
+                    <td>
+                        {{item['users']}}
+                    </td>
+                    <td>
+                        {{item['tags'].join(', ')}}
+                    </td>
+                    <td>
+                        <span *ngIf="item['credit_card_id']!=null">{{item['credit_card_id']['number']}}</span>
+                    </td>
+                    <td *ngIf="item.containsKey('budget')">
+                        <div>{{item['budget']['mount'] | currency:'COP':true:'1.0-0'}} <span *ngIf="item['budget']['block']" class="green"><i class="material-icons">lock</i></span></div>
+                    </td>
+                    <td *ngIf="item.containsKey('budget')">
+                        {{item['budget']['price'] | currency:'COP':true:'1.0-0'}}
+                    </td>
+                    <td *ngIf="!item.containsKey('budget')"></td>
+                    <td *ngIf="!item.containsKey('budget')"></td>
+                    <td *ngIf="item.containsKey('restrictions')">
+                        <div *ngFor="let xitem of item['restrictions']">{{xitem['day'] | days}} {{xitem['start']}} - {{xitem['end']}}<span *ngIf="item['restrictions_block']" class="green"><i class="material-icons">lock</i></span></div>
+                    </td>
+                    <td *ngIf="!item.containsKey('restrictions')"></td>
+                    <td>
+                        <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                        <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                    </td>
+                    <td class="text-center">
+                        <button *ngIf="item['active']" class="btn btn-outline-danger btn-sm" (click)="deactivateModal(item)">
+                            <i class="material-icons" title="Desactivar">visibility_off</i>
+                        </button>
+                        <button *ngIf="!item['active']" class="btn btn-outline-warning btn-sm" (click)="activateModal(item)">
+                            <i class="material-icons" title="Activar">visibility</i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modalDeactivate" tabindex="-1" role="dialog" aria-labelledby="modalDeactivate" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="item != null">
+            <div class="modal-header">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="modal-title" id="deactivateModal">¿Está seguro que de desea desactivar el centro de costos {{item['name']}}?</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-danger" (click)="remove(item)"><b>Desactivar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalActivate" tabindex="-1" role="dialog" aria-labelledby="modalActivate" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="item != null">
+            <div class="modal-header">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="modal-title" id="activateModal">¿Está seguro que de desea activar el centro de costos {{item['name']}}?</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-danger" (click)="active(item)"><b>Activar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+

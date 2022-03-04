@@ -1,0 +1,91 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Perfil</a>
+                <a class="breadcrumb-item" [routerLink]="goToListPersonalCreditCards(user['_id'])">Tarjetas de crédito</a>
+                <span class="breadcrumb-item active">Nueva</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div>
+                <h1>Tarjetas de crédito</h1>
+            </div>
+            <div class="container">
+                <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'credits_cards').length > 0">
+                    <p *ngFor="let e of (adminServices.errors | getErrors:'credits_cards')">
+                        {{e['errorMessage'] | i18n}}
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-block">
+                        <h5>Datos de la tarjeta</h5>
+                        <hr>
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'number').length > 0}">
+                                <label for="number" class="col-md-2 col-form-label" >Número *</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="credit_card['number']"
+                                            class="form-control"
+                                            type="text"
+                                            id="number">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'number').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'number')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'year').length > 0}">
+                                <label for="year" class="col-md-2 col-form-label" >Año de expiración *</label>
+                                <div class="col-md-10">
+                                    <select [(ngModel)]="credit_card['year']" class="form-control" name="year" id="year">
+                                        <option *ngFor="let item of years" value="{{item}}">{{item}}</option>
+                                    </select>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'year').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'year')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'month').length > 0}">
+                                <label for="month" class="col-md-2 col-form-label" >Mes de expiración *</label>
+                                <div class="col-md-10">
+                                    <select [(ngModel)]="credit_card['month']" class="form-control" name="month" id="month">
+                                        <option *ngFor="let item of months" value="{{item['value']}}">{{item['name']}}</option>
+                                    </select>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'month').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'month')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'cvv').length > 0}">
+                                <label for="cvv" class="col-md-2 col-form-label" >Código de verificación *</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="credit_card['cvv']"
+                                            class="form-control"
+                                            type="password"
+                                            id="cvv">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'cvv').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'cvv')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button (click)="save()" [disabled]="processing" class="btn btn-outline-primary"><span><b>{{processing ? 'Creando..':'Crear'}}</b></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

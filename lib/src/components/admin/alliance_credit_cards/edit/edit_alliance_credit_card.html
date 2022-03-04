@@ -1,0 +1,168 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="goToAlliance(alliance_id)">{{alliance_view['legal']['name']}}</a>
+                <a class="breadcrumb-item">Tarjetas de Crédito Corporativas</a>
+                <span class="breadcrumb-item active">Editar {{credit_card['_id'] | id}}</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div>
+                <h1>Tarjeta de Crédito / {{credit_card['_id'] | id}}</h1>
+            </div>
+            <div class="container">
+                <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'credits_cards').length > 0">
+                    <p *ngFor="let e of (adminServices.errors | getErrors:'credits_cards')">
+                        {{e['errorMessage'] | i18n}}
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'number').length > 0}">
+                                <label class="col-md-2 col-form-label" >Número</label>
+                                <div class="col-md-10">
+                                    {{credit_card['number']}}
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'name').length > 0}">
+                                <label for="name" class="col-md-2 col-form-label" >Nombre</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="credit_card['name']"
+                                            class="form-control"
+                                            type="text"
+                                            id="name">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'name').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'name')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-inverse">
+                                    <tr class="table-active">
+                                        <th colspan="5">Centros de costos</th>
+                                        <th colspan="2">
+                                            <button (click)="addCostCenterModal()" class="btn btn-success float-right">
+                                                Seleccionar
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="5">#</th>
+                                        <th colspan="2" class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let item of credit_card['costs_centers']">
+                                        <td colspan="5">{{item['name']}}</td>
+                                        <td colspan="2" class="text-center">
+                                            <button class="btn btn-outline-danger btn-sm" (click)="removeCostCenterModal(item)"><i class="material-icons">delete_forever</i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <input type="text" name="costs_centers" class="form-control" [hidden]="true" [(ngModel)]="credit_card['costs_centers']" required>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button (click)="save()" [disabled]="processing" class="btn btn-primary"><span>Guardar cambios</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="addCostCenterodal" tabindex="-1" role="dialog" aria-labelledby="addCostCenterodal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text"
+                                placeholder="Buscar centro de costo por nombre o tag">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" (click)="searchCostsCenters()">Buscar</button>
+                    </div>
+                </div>
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    El centro de costo ya se encuentra seleccionado.
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>tags</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_costs_centers">
+                            <th scope="row">{{item['_id'] | id}}</th>
+                            <td>
+                                {{item['name']}}
+                            </td>
+                            <td>
+                                {{item['tags'].join(', ')}}
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-primary" (click)="selectCostCenter(item)">Agregar</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalDeactivate" tabindex="-1" role="dialog" aria-labelledby="modalDeactivate" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" *ngIf="itemModal != null">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal">¿Está seguro que de desea eliminar el centro de costo {{itemModal['name']}}?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="itemModalError" class="alert alert-danger">
+                    La tarjeta debe tener almenos un centro de costo.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" (click)="removeCostCenter(itemModal)">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>

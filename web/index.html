@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Mi Águila</title>
+    <link rel="icon" href="assets/favicon.png">
+    <link rel="stylesheet" href="css/styles.css?version">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.css?version">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,600" rel="stylesheet">
+    <script src="https://wchat.freshchat.com/js/widget.js" async></script>
+
+</head>
+<script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
+<body class="default-background-color">
+
+<div class="loader"></div>
+<my-app>Cargando...</my-app>
+</body>
+    
+<!--<script>
+    window.fcWidget.init({
+    token: "1f073ca9-c647-4f6e-97c6-51d8c5e2fb1c",
+    host: "https://wchat.freshchat.com",
+    tags: ["user_web_app"],
+  });
+-->
+
+<script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
+<script>
+    var preChatTemplate = {
+        mainbgColor: '#00d6b0',
+        //Form Header Text and Submit button text color.
+        maintxColor: '#fff',
+        //Chat Form Title
+        heading: '¿Necesitas Ayuda?',
+        SubmitLabel: 'Iniciar chat',
+        textBanner: 'Diligencia los siguientes datos para ser atendido por uno de nuestros agentes',
+        //Chat form Welcome Message
+        //All the values are mandatory and the script will not work if not available.
+        fields : {
+            field1: {
+                //Type can be either text or title
+                type: "name",
+                //Label for Field Title, can be in any language
+                label: "Nombre y Apellidos",
+                //Field ID for Title
+                fieldId: "name",
+                //Required "yes" or "no"
+                required: "yes",
+                //Error text to be displayed
+                error: "Por favor ingrese un nombre válido"
+            },
+            field2: {
+                //Type can be either text or title
+                type: "email",
+                //Label for Field Title, can be in any language
+                label: "Email",
+                //Field ID for Title
+                fieldId: "email",
+                //Required "yes" or "no"
+                required: "yes",
+                //Error text to be displayed
+                error: "Por favor ingrese un email válido"
+            },
+            field3 : {
+                //Type for Phone - Do Not Change
+                type: "phone",
+                //Label for Field Phone, can be in any language
+                label: "Teléfono",
+                //Default - Field ID for Phone - Do Not Change
+                fieldId: "phone",
+                //Required "yes" or "no"
+                required: "yes",
+                //Error text to be displayed
+                error: "Por favor ingrese un teléfono válido"
+            },
+            field4: {
+                //Type can be either text or title
+                type: "title",
+                //Label for Field Title, can be in any language
+                label: "Empresa",
+                //Field ID for Title
+                fieldId: "alliance",
+                //Required "yes" or "no"
+                required: "yes",
+                //Error text to be displayed
+                error: "Por favor ingrese un texto válido"
+            },
+            field5 : {
+                //Type for Dropdown
+                type: "dropdown",
+                //Label for Field Dropdown, can be in any language
+                label: "Servicio",
+                //Field ID for Plan Dropdown
+                fieldId: "service",
+                //Required "yes" or "no"
+                required: "no",
+                //Error text to be displayed
+                error: "Please select an option",
+                //Options for the Dropdown field
+                options: ['Información de mi viaje','Reportar un problema','Ayuda general','Otro']
+            }
+        }
+    };
+    window.fcSettings = {
+        token: "1f073ca9-c647-4f6e-97c6-51d8c5e2fb1c",
+        host: "https://wchat.freshchat.com",
+        tags: ["user_web_app"],
+        config: {
+            headerProperty:
+                {
+                    direction: 'rtr' //will move widget to left side of the screen
+                },
+            cssNames:
+                {
+                    //The below element is mandatory. Please add any custom class or leave the default.
+                    // widget: 'custom_fc_frame',
+                    //The below element is mandatory. Please add any custom class or leave the default.
+                    expanded: 'custom_fc_expanded'
+                }
+        },
+        onInit: function() {
+            console.log('widget init');
+            fcPreChatform.fcWidgetInit(preChatTemplate);
+        }
+    };
+</script>
+<style>
+    .custom_fc_frame {
+        right: 4% !important;
+        bottom: 10% !important;
+    }
+</style>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT0y9qHYc_aMrBvSdOppowZqtNGDUCZ40&libraries=placeses,visualization,drawing,geometry,places"></script>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-65777241-10', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script src="js/moment-with-locales.min.js"></script>
+<script defer src="main.dart.js"></script>
+
+<!-- jQuery first, then Tether, then Bootstrap JS. -->
+<script src="js/jquery-3.2.1.slim.min.js"></script>
+<script src="js/tether.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!--<script>
+    // Make sure fcWidget.init is included before setting these values
+
+    // To set unique user id in your system when it is available
+    window.fcWidget.setExternalId("asdas.doe1987");
+
+    // To set user name
+    window.fcWidget.user.setFirstName("asd");
+
+    // To set user email
+    window.fcWidget.user.setEmail("asa.doe@gmail.com");
+
+    // To set user properties
+    window.fcWidget.user.setProperties({
+        plan: "Estate",                 // meta property 1
+        status: "Active"                // meta property 2
+    });
+</script>-->
+<!--<script type="text/javascript">-->
+<!--    FreshWidget.init("", {"queryString": "&widgetType=popup&formTitle=Pensamientos+y+Sugerencias&submitTitle=Enviar&submitThanks=Muchas+gracias+por+compartir+su+opinion.", "utf8": "✓", "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback / FAQ", "buttonColor": "white", "buttonBg": "#0c9", "alignment": "2", "offset": String(window.screen.availHeight*0.65) + "px", "submitThanks": "Muchas gracias por compartir su opinion.", "formHeight": "600px", "url": "https://miaguila.freshdesk.com"} );</script>-->
+<!--</html>-->

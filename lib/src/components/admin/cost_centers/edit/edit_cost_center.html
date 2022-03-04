@@ -1,0 +1,214 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="goToViewAlliance(alliance_view['_id'])">Centros de Costo - {{alliance_view['legal']['name']}}</a>
+                <span class="breadcrumb-item active" *ngIf="!edit">Nuevo</span>
+                <span class="breadcrumb-item active" *ngIf="edit">Editar {{cost_center['name']}}</span>
+            </nav>
+        </div>
+
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'costs_centers').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'costs_centers')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <sel-menu_overview></sel-menu_overview>
+            <div>
+                <h1>Centro de Costo / <span *ngIf="!edit">Nuevo</span><span *ngIf="edit">{{cost_center['name']}}</span></h1>
+            </div>
+            <div class="container">
+
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'name').length > 0}">
+                                <label for="name" class="col-md-2 col-form-label" >Nombre</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="cost_center['name']"
+                                            class="form-control"
+                                            type="text"
+                                            id="name">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'name').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'name')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'tags').length > 0}">
+                                <label for="name" class="col-md-2 col-form-label" >Tags</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="cost_center['tags']"
+                                            class="form-control"
+                                            type="text"
+                                            id="tags">
+                                    <div>Separar con comas 'tag1,tag2,tag3'</div>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'tags').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'tags')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'tags').length > 0}" *ngIf="cost_center['alliance_father_id']!='5b34096146f9ca7c8909c1df' || cost_center['alliance_father_id']!='5b71a5a4abc0c162bfa497b4'">
+                                <label for="budget-mount" class="col-md-2 col-form-label" >Presupuesto Mensual</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="cost_center['budget']['mount']"
+                                            class="form-control"
+                                            type="number"
+                                            min="0"
+                                            id="budget-mount">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'budget-mount').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'budget-mount')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12 col-form-label">
+                                    <input
+                                            [(ngModel)]="cost_center['budget']['block']"
+                                            [checked]="cost_center['budget']['block']"
+                                            type="checkbox"
+                                            value="1">
+                                    Bloquear peticiones cuando se exceda el presupuesto
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12 col-form-label">
+                                    <input
+                                            [(ngModel)]="cost_center['restrictions_block']"
+                                            [checked]="cost_center['restrictions_block']"
+                                            type="checkbox"
+                                            value="1">
+                                    Bloquear si esta dentro del horario de restricción
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-text" *ngIf="edit">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-inverse">
+                                    <tr class="table-active col-12 p-0">
+                                        <th colspan="4">Franjas horarias</th>
+                                        <th colspan="1">
+                                            <button class="btn btn-outline-success float-right" (click)="createRestrictionModal()">
+                                                <b>Crear</b>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    <tr class="table-active col-12 p-0">
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Hora inicio</th>
+                                        <th class="text-center">Hora fin</th>
+                                        <th class="text-center">Día</th>
+                                        <th class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let item of cost_center['restrictions']">
+                                        <th class="text-center" scope="row">#</th>
+                                        <td class="text-center">{{item['start']}}</td>
+                                        <td class="text-center">{{item['end']}}</td>
+                                        <td class="text-center">
+                                            <span *ngIf="item['day']==0" class="badge badge-success">Domingo </span>
+                                            <span *ngIf="item['day']==1" class="badge badge-success">Lunes </span>
+                                            <span *ngIf="item['day']==2" class="badge badge-success">Martes </span>
+                                            <span *ngIf="item['day']==3" class="badge badge-success">Miercoles </span>
+                                            <span *ngIf="item['day']==4" class="badge badge-success">Jueves </span>
+                                            <span *ngIf="item['day']==5" class="badge badge-success">Vienes </span>
+                                            <span *ngIf="item['day']==6" class="badge badge-success">Sabado </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-outline-danger btn-sm" (click)="cost_center['restrictions'].remove(item)" title="Eliminar" data-toggle="tooltip"><i class="material-icons">delete_forever</i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button (click)="save()" class="btn btn-outline-primary"><span *ngIf="!edit"><b>Guardar</b></span><span *ngIf="edit"><b>Guardar cambios</b></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal restricciones-->
+
+<div class="modal" id="createRestrictionModal" tabindex="-1" role="dialog" aria-labelledby="createRestrictionModal" aria-hidden="true" *ngIf="edit">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Crear Restricción</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div *ngIf="er" class="alert alert-danger col-12" role="alert">
+                        {{restrictions_error}}
+                    </div>
+                    <div class="form-group col-4">
+                        <div class="col-12 float-left pb-2 padding-item"><b>Hora inicio: </b></div>
+                        <div class="col-6 float-left padding-item">
+                            <select [(ngModel)]="time['hour']" class="form-control" (change)="e_restrictions()">
+                                <option *ngFor="let hour of hours" value="{{hour['v']}}">{{hour['name']}}</option>
+                            </select>
+                        </div>
+                        <div class="col-6 float-left padding-item">
+                            <select [(ngModel)]="time['minute']" class="form-control" (change)="e_restrictions()">
+                                <option value="00">00</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-4">
+                        <div class="col-12 float-left pb-2 padding-item"><b>Hora fin: </b></div>
+                        <div class="col-6 float-left padding-item">
+                            <select [(ngModel)]="time2['hour']" class="form-control" (change)="e_restrictions()">
+                                <option *ngFor="let hour of hours2" value="{{hour['v']}}">{{hour['name']}}</option>
+                            </select>
+                        </div>
+                        <div class="col-6 float-left padding-item">
+                            <select [(ngModel)]="time2['minute']" class="form-control" (change)="e_restrictions()">
+                                <option value="00">00</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-4">
+                        <div class="col-12 float-left pb-2 padding-item"><b>Día de restricción: </b></div>
+                        <select [(ngModel)]="day" class="form-control padding-item">
+                            <option value="0">Domingo</option>
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3">Miercoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sabado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" (click)="add()"><b>Agregar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

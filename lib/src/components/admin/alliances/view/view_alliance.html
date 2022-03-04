@@ -1,0 +1,213 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="RoutePaths.list_alliances.toUrl()">Alianzas</a>
+                <span class="breadcrumb-item active">Alianza {{alliance['legal']['name']}}</span>
+            </nav>
+        </div>
+
+        <div class="col-12" *ngIf="alliance!=null">
+            <div *ngIf="alliance['legal'].isNotEmpty">
+                <a class="btn btn-outline-primary float-right" [routerLink]="goToEditAlliance(alliance['_id'])"><b> Editar</b></a>
+                <h1>Alianza / <span *ngIf="alliance.containsKey('_id')">{{alliance['legal']['name']}}</span></h1>
+                <h4 *ngFor="let alliance of father_alliance">
+                    <i class="material-icons mirror-text">keyboard_return</i>
+                    <a [routerLink]="goToViewAlliance(alliance['_id'])">{{alliance['legal']['name']}}</a>
+                </h4>
+            </div>
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'errorAny').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'errorAny')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="avancedTab">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab1" id="active">Vista general</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab2">Centros de costo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab3">Favoritos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab4">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab5">Tarjetas de Crédito</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab6">Vuelos</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-block default-background-color">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade" id="tab1">
+                            <div class="table table-responsive">
+                                <table *ngIf="alliance.containsKey('_id')" class="table">
+                                    <tbody class="default-background-color">
+                                    <tr>
+                                        <th>ID</th>
+                                        <td>{{alliance['_id'] | id}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>País</th>
+                                        <td>{{alliance['country_id']['name']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th  *ngIf="alliance['domains']!=[]">Dominios</th>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                <tr *ngFor="let item of alliance['domains']">
+                                                 <td>{{item}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <th colspan="2">Información Legal</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <td>{{alliance['legal']['name']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>NIT</th>
+                                        <td>{{alliance['legal']['nit']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dirección</th>
+                                        <td>{{alliance['legal']['address']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Teléfono</th>
+                                        <td>{{alliance['legal']['phone']}}</td>
+                                    </tr>
+
+                                    <tr class="table-active" *ngIf="alliance.containsKey('budget')">
+                                        <th colspan="2">Presupuesto</th>
+                                    </tr>
+                                    <tr *ngIf="alliance.containsKey('budget')">
+                                        <th>Presupuesto Mensual</th>
+                                        <td>{{alliance['budget']['mount'] | currency:'COP':true:'1.0-0'}}</td>
+                                    </tr>
+                                    <tr *ngIf="alliance.containsKey('budget')">
+                                        <th colspan="2" *ngIf="alliance['budget']['block']">No excede el presupuesto</th>
+                                        <th colspan="2" *ngIf="!alliance['budget']['block']">Si excede el presupuesto</th>
+                                    </tr>
+
+
+                                    <tr class="table-active">
+                                        <th colspan="2">Representante Legal</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <td>{{alliance['legal']['name_representative']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Documento</th>
+                                        <td>{{alliance['legal']['document_type_representative']}} {{alliance['legal']['document_number_representative']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Correo Electrónico</th>
+                                        <td>{{alliance['legal']['email_representative']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Teléfono</th>
+                                        <td>{{alliance['legal']['phone_representative']}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab2">
+                            <list-cost-centers [alliance_id]="alliance_id" *ngIf="alliance_id!=''"></list-cost-centers>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab3">
+                            <list-alliance-favorites [alliance_id]="alliance_id" *ngIf="alliance_id!=''"></list-alliance-favorites>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab4">
+                            <list-users [alliance_id]="alliance_id" *ngIf="alliance_id!=''"></list-users>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab5">
+                            <list-alliance-credit-cards [alliance_id]="alliance_id" *ngIf="alliance_id!=''"></list-alliance-credit-cards>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab6">
+                            <list-trips-details [alliance_id]="alliance_id" *ngIf="alliance_id!=''"></list-trips-details>
+                        </div>
+
+                        <!--<div role="tabpanel" class="tab-pane fade" id="tab2">
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Restricciones:</strong> solo permiten crear viajes en zonas y horas listadas, para los tipos de viaje corporativos.
+                            </div>
+                            <div class="table table-responsive">
+                                <table class="table">
+                                    <thead class="thead-inverse">
+                                    <tr>
+                                        <th>Días</th>
+                                        <th>Horas</th>
+                                        <th>Zona</th>
+                                        <th class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab3">
+                            <div class="card-block">
+                                <div class="tab-content">
+
+                                    <div role="tabpanel">
+                                        <div>
+                                            <a class="btn btn-primary float-right" [routerLink]="['AddFavorite']"><i class="material-icons">mode_edit</i> Agregar</a>
+                                        </div>
+
+                                        <div class="table table-responsive">
+                                            <table class="table">
+                                                <thead class="thead-inverse">
+                                                <tr>
+                                                    <th>Tipo</th>
+                                                    <th>Nombre</th>
+                                                    <th>Posicion Inicial</th>
+                                                    <th>Direccion Inicial</th>
+                                                    <th>Posicion Final</th>
+                                                    <th>Direccion Final</th>
+                                                    <th class="text-center"><i class="material-icons">settings</i></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody *ngFor="let item of list_favorites">
+                                                <tr>
+                                                    <td class="text-center"><i class="material-icons">settings</i></td>
+                                                    <td>{{item['name']}}</td>
+                                                    <td>{{item['start']['position']}}</td>
+                                                    <td>{{item['start']['address']}}</td>
+                                                    <td>{{item['end']['position']}}</td>
+                                                    <td>{{item['end']['address']}}</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-outline-danger btn-sm"><i class="material-icons">clear</i></button>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

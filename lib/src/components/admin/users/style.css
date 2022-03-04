@@ -1,0 +1,19 @@
+.space-list {
+    padding: 10px 30px;
+}
+
+text-success {
+    color: #2ac46c;
+}
+
+text-danger {
+    color: #df1843;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

@@ -1,0 +1,172 @@
+.icon-width {
+    width: 24px;
+}
+
+#map-canvas {
+    height: 500px;
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
+#space-canvas {
+    height: 50px;
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
+.img-status {
+    max-height: 60px;
+    background-color: initial;
+    margin-right: 10px;
+}
+
+.img-detail-list {
+    max-height: 120px;
+}
+
+.color {
+    height: 32px;
+    width: 32px;
+    border: 1px solid #000000;
+}
+
+.no-show {
+    background-color: transparent !important;
+}
+
+.text-big {
+    font-size: 200%;
+}
+
+.table-no-borders {
+    border-top: 1px solid #eceeef;
+}
+
+.table-no-borders td {
+    border-top: 0;
+}
+
+.color-bg {
+    background-color: #eeef;
+}
+
+.admin, .admin:link, .admin:visited {
+    color: #f0ad4e;
+    text-decoration: none;
+}
+
+.admin:hover, .admin:active {
+    color: #C17A15;
+    text-decoration: none;
+}
+
+
+.data-search {
+    font-size: 80%;
+}
+
+.data-search .title {
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #5cb85c;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.data-search img {
+    width: 50px;
+    float: left;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+input[type="checkbox"] + span {
+    background: white;
+    border-radius: 4px 0 0 4px;
+    color: white;
+    padding: 4px;
+    box-sizing: content-box;
+    position: absolute;
+    left: 18px;
+    top: 3px;
+}
+input[type="checkbox"]:checked + span {
+    color: #00D19D;
+}
+
+input[type="checkbox"] + span:after {
+    content: "✓";
+}
+
+input[type="checkbox"]:checked + span:after {
+    content: "✓";
+}
+
+.modal-footer .text {
+    font-size: 12px;
+}
+
+text-success {
+    color: #2ac46c;
+}
+
+text-info {
+    color: #09758e;
+}
+
+text-warning {
+    color: #f2c230;
+}
+
+text-primary {
+    color: #00cc99;
+}
+
+text-danger {
+    color: #df1843;
+}
+
+.btn {
+    white-space: normal;
+}
+
+p.clear {
+    clear: both;
+}
+
+.drop-zone {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    color: #0c9;
+    font-size: 20pt;
+    font-weight: bold;
+    padding: 25px;
+    text-align: center;
+}
+
+.modal-xlg {
+    max-width: 1200px;
+    max-height: 800px;
+}
+.up-space {
+    padding-top: 17px;
+}
+.down-space {
+    padding-top: 10px;
+}
+
+.margin-0 {
+    margin: 0 auto;
+}
+
+.shadow-class-passenger {
+    background-color: #E5E9F2;
+    transform: scale(0.98);
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}

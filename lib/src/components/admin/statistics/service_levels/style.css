@@ -1,0 +1,71 @@
+.img-map {
+    height: 60px;
+}
+
+.img-detail {
+    float: left;
+    margin-right: 20px;
+    height: 90px;
+}
+.days-height {
+    height: 10.0em;
+}
+.import-textarea {
+    height: 200px;
+}
+.message-textarea {
+    height: 240px
+}
+.icon-help {
+    color: #00d19D;
+}
+#days {
+    overflow-y: hidden;
+}
+
+.column-left {
+    float: left;
+    max-width: 10%;
+    /*max-height: 200px;*/
+    margin: 0;
+    padding: 1em;
+    border-style: inset;
+}
+
+.column-right {
+    float: right;
+    max-width: 90%;
+    /*max-height: 200px;*/
+    margin: 0;
+    padding: 1em;
+    border-style: inset;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+text-success {
+    color: #2ac46c;
+}
+
+text-danger {
+    color: #df1843;
+}
+
+text-primary {
+    color: #00cc99;
+}
+
+.btn {
+    white-space:normal;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

@@ -1,0 +1,771 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid" style="overflow-x: hidden;">
+    <div class="row col-map">
+
+        <div class="col-md-5 col-lg-4 col-xl-3 pre-scrollable up-space" id="menu">
+            <span class="title-form"><i class="material-icons icon-title">people</i> RUTA</span>
+            <table class="table-rounded">
+                <tbody>
+                <tr>
+                    <td *ngIf="adminServices.list_regions.length>0">
+                        <select class="form-control only-border-bottom selected-background" id="country_id" (change)="setCenter()" [(ngModel)]="xcenter">
+                            <option value="">
+                                -- Seleccione una región --
+                            </option>
+                            <option *ngFor="let region of adminServices.list_regions"
+                                    value="{{region['center'][0]}},{{region['center'][1]}}">
+                                {{region['name']}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <table class="table-rounded">
+                    <tbody>
+                    <tr>
+                        <th class="default-background-color label-color">Seleccionar Tipo de Ruta</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="form-control only-border-bottom selected-background" id="type_route" (change)="selectTypeRoute()"
+                                    [(ngModel)]="type_route">
+                                <option value="oneforall">
+                                    Origen Común
+                                </option>
+                                <option value="allforone">
+                                    Destino Común
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table-rounded" *ngFor="let stop of stops;let i = index">
+                    <tbody>
+                    <tr class="default-background-color">
+                        <td class="default-background-color">
+                            <div id="label_{{i}}" hidden="true">
+                                <span class="col-11" id="label_address_{{i}}"></span>
+                                <button type="button" class="input-group-addon btn col-1 close text-center" (click)="showAutocomplete(i)">
+                                    <i class="material-icons text-danger text-center">close</i>
+                                </button>
+                            </div>
+                            <div class="group col-11-input">
+                                <input class="default-background-color" type="text" id="stop_{{i}}"
+                                       (keyup)="geoSearch($event,i)" required>
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>{{type_route == 'oneforall' ? 'Origen' : 'Destino'}}</label>
+                            </div>
+                            <button class="input-group-addon btn-outline-primary btn-favorite btn col-1 text-center text-rendering" title="Seleccionar un favorito" data-toggle="tooltip" data-placement="bottom" id="btn_{{i}}" (click)='selectFavoritesModal(i)'><i class="material-icons text-center">favorite_border</i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="default-background-color">
+                            <table class="autocomplete" id="autocomple_{{i}}" onblur="close()">
+                                <tbody class="col-12 d-block">
+                                <tr class="address-tr d-block" *ngFor="let item of geo_data">
+                                    <td class="address col-12 d-block" (click)="loadAddress(item,i)"><i class="material-icons font-color">place</i> {{item['formatted_address']}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table class="table-rounded">
+                <tbody>
+                <tr>
+                    <td class="default-background-color">
+                        <div class="form-group d-flex">
+                            <button type="button" class="btn btn-outline-success width-type-service mr-1p icon-svg"
+                                    (click)="setTypeService('58cac00c7c16d817ed7edbf6')"
+                                    [ngClass]="{active: type_service_id=='58cac00c7c16d817ed7edbf6'}"
+                                    [disabled]="!availableServices.contains('58cac00c7c16d817ed7edbf6')">
+                                <img class="mb-2" src="/assets/camioneta.svg">
+                                <b>Camioneta</b>
+                            </button>
+                            <button type="button" class="btn btn-outline-success width-type-service ml-1p icon-svg"
+                                    (click)="setTypeService('5b858c124cd1e9101ef790ff')"
+                                    [ngClass]="{active: type_service_id=='5b858c124cd1e9101ef790ff'}"
+                                    [disabled]="!availableServices.contains('5b858c124cd1e9101ef790ff')">
+                                <img src="/assets/van.svg">
+                                <b>Van</b>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded" *ngIf="map_services != null">
+                <tbody>
+                <tr>
+                    <td class="default-background-color">
+                        <div class="form-group group-checkbox label-color">
+                            ¿Cuándo?
+                            <span class="d-inline-flex">
+                                <input class="input-type-service" (change)="setTypeTrip('instantly')" type="radio" id="instantly" [checked]="type_trip == 'instantly'" [disabled]="!availableTypeTrip.contains('instantly')">
+                                <label class="p-relative label-radio label-color" for="instantly">Inmediato</label>
+                            </span>
+                            <span class="d-inline-flex">
+                                <input class="input-type-service" (change)="setTypeTrip('reservation')" type="radio" id="reservation" [checked]="type_trip == 'reservation'" [disabled]="!availableTypeTrip.contains('reservation')">
+                                <label class="p-relative label-radio label-color" for="reservation">Reserva</label>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded">
+                <tbody>
+                <tr>
+                    <th class="default-background-color label-color" colspan="2">Seleccionar Pasajeros</th>
+                </tr>
+                <tr>
+                    <td>
+                        <button (click)="selectUsersModal()" class="col-12 btn btn-success btn-sm"><b>Seleccionar Pasajeros</b></button>
+                    </td>
+                </tr>
+                <tr *ngFor="let item of passengers">
+                    <table class="col-12">
+                        <tbody>
+                        <tr class="col-12">
+                            <td class="text-center p-3"><img [src]="item['personal_info']['image']" alt="{{item['personal_info']['firstname']}}" class="img-map border profile-image rounded"></td>
+                            <td class="text-center col-4">
+                                {{item['personal_info']['firstname']}} {{item['personal_info']['lastname']}}<br>
+                                {{item['personal_info']['phone']}}
+                            </td>
+                            <td class="text-center col-4">
+                                <button class="btn btn-outline-danger btn-sm" (click)="passengers.remove(item)"><i class="material-icons">delete_forever</i></button>
+                            </td>
+                        </tr>
+                        <tr class="col-12" *ngIf="item.containsKey('route')">
+                            <td colspan="12" class="p-12 label-color">
+                                <b>{{item['route'][0]['name']}}: {{item['route'][0]['address']}}</b>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded" *ngIf="type_trip =='reservation'">
+                <tbody>
+                <tr>
+                    <th class="default-background-color label-color" *ngIf="type_route=='oneforall' && trip['category'] == 'route'">Fecha y Hora de Partida</th>
+                    <th class="default-background-color label-color" *ngIf="type_route=='allforone' && trip['category'] == 'route'">Fecha y Hora de Llegada</th>
+                </tr>
+                <tr *ngIf="type_trip =='reservation'">
+                    <td>
+                        <div class="row">
+                            <div class="form-group col-sm-4 col-xs-5 float-left">
+                                <select [(ngModel)]="month" (change)="change()" class="form-control date-select only-border-bottom selected-background" name="month"
+                                        id="month">
+                                    <option *ngFor="let item of months" value="{{item['v']}}">{{item['name']}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-4 col-xs-5 float-left">
+                                <select id="day" [(ngModel)]="day" class="form-control date-select only-border-bottom selected-background" name="day">
+                                    <option *ngFor="let day_i of days" value="{{day_i}}">{{day_i}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-4 col-xs-5 float-left">
+                                <select [(ngModel)]="year" class="form-control date-select only-border-bottom selected-background" name="year" id="year">
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4 float-left">
+                                <select [(ngModel)]="time['hour']" class="form-control date-select only-border-bottom selected-background">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4 float-left">
+                                <select [(ngModel)]="time['minute']" class="form-control date-select only-border-bottom selected-background">
+                                    <option value="0">0-9</option>
+                                    <option value="10">10-19</option>
+                                    <option value="20">20-29</option>
+                                    <option value="30">30-39</option>
+                                    <option value="40">40-49</option>
+                                    <option value="50">50-59</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4 float-left">
+                                <select [(ngModel)]="meridiem" class="form-control date-select only-border-bottom selected-background">
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded">
+                <tbody>
+                <tr>
+                    <th class="default-background-color label-color" colspan="2">Métodos de pago</th>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <select class="form-control only-border-bottom selected-background" id="pay" (change)="setPay()" [(ngModel)]="pay">
+                            <option value="alliance">
+                                Corporativo
+                            </option>
+                            <option value="tc">
+                                Tarjeta de crédito
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody *ngIf="pay == 'tc'">
+                <tr>
+                    <td colspan="2" *ngIf="cost_center == null">
+                        <strong class="label-color">Pago con mi tarjeta de crédito</strong>
+                        <div *ngIf="user_dat['credit_card_id'] != null">
+                            <strong>{{user_dat['credit_card_id']['type']}}</strong>
+                            {{user_dat['credit_card_id']['number']}}
+                            <span *ngIf="user_dat['credit_card_id']['name'] != ''"><i>{{user_dat['credit_card_id']['name']}}</i></span>
+                        </div>
+                        <div *ngIf="user_dat['credit_card_id'] == null">
+                            <strong class="label-color">No tiene ninguna seleccionada</strong>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody *ngIf="pay == 'alliance'">
+                <tr>
+                    <th class="default-background-color label-color" colspan="2">Centro de Costo</th>
+                </tr>
+                <tr *ngIf="cost_center != null">
+                    <td colspan="2">
+                        <button (click)="resetCostCenter()" class="btn btn-danger btn-sm float-right"><i
+                                class="material-icons">delete_forever</i></button>
+                        Centro de Costos: <strong class="label-color">{{cost_center['name']}}</strong>
+                    </td>
+                </tr>
+                <tr *ngIf="cost_center == null">
+                    <td colspan="2">
+                        <button (click)="selectCostCenterModal(user['_id'])" class="col-12 btn btn-success btn-sm"><b>Centros de
+                            costos de {{user['personal_info']['firstname']}}
+                        </b></button>
+                    </td>
+                </tr>
+                <tr *ngIf="cost_center == null && who=='users'">
+                    <td colspan="2">
+                        <button (click)="selectCostCenterModal(passenger['_id'])" class="col-12 btn btn-success btn-sm"><b>Centros
+                            de
+                            costos de {{passenger['personal_info']['firstname']}}
+                        </b></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded">
+                <tbody>
+                <tr>
+                    <th class="default-background-color label-color" colspan="2">Concepto <span *ngIf="pay == 'tc'">(opcional)</span></th>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea class="form-control" [(ngModel)]="trip['concept']"
+                                  placeholder="Ej: Reunión Ministerio">
+                        </textarea>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table-rounded mb-2">
+                <tbody>
+                <tr>
+                    <th class="default-background-color label-color" colspan="2">Comentarios para el Águila (opcional)</th>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea class="form-control" [(ngModel)]="trip['comments']">
+                        </textarea>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button (click)="routesEstimate(trip, stops, month, day, time, meridiem)" class="btn btn-estimar btn-block">
+                <b>Estimar Ruta</b>
+            </button>
+            <button (click)="newTripPost()" [disabled]="processing" class="btn btn-primary btn-block down-space mb-3"
+                    style="border-radius: 0 8px 0 0;"><b>Pedir Águila</b>
+            </button>
+            <table *ngIf="estimate != null" class="table table-sm">
+                <tr>
+                    <td class="label-color"><strong>Tiempo Estimado</strong></td>
+                    <td>{{estimate['time']}} min</td>
+                </tr>
+                <tr>
+                    <td class="label-color"><strong>Distancia Estimada</strong></td>
+                    <td>{{estimate['distance'] / 1000}} km</td>
+                </tr>
+                <tr *ngIf="estimate['price']['base_start'] > 0">
+                    <td class="label-color"><strong>Base</strong></td>
+                    <td>{{(update_fare_2020 * estimate['price']['base_start']).round() | currency:'COP':true:'1.0-0'}}</td>
+                </tr>
+                <tr *ngIf="estimate['price']['base_end'] > 0">
+                    <td class="label-color"><strong>Base final</strong></td>
+                    <td>{{(update_fare_2020 * estimate['price']['base_end']).round() | currency:'COP':true:'1.0-0'}}</td>
+                </tr>
+                <tr *ngIf="estimate['price']['night'] > 0">
+                    <td class="label-color"><strong>Nocturno/Feriado</strong></td>
+                    <td>{{(update_fare_2020 * estimate['price']['night']).round() | currency:'COP':true:'1.0-0'}}</td>
+                </tr>
+                <tr *ngIf="estimate['price']['total'] > 0 || estimate['price']['total']!=null">
+                    <td class="label-color"><strong>Precio Estimado</strong></td>
+                    <td>{{estimate['price']['total'] | currency:'COP':true:'1.0-0'}}*</td>
+                </tr>
+                <tr *ngIf="estimate['price']['total'] > 0 || estimate['price']['total']!=null">
+                    <p class="mt-2">* Este valor no tiene en cuenta el tráfico por lo cual el valor final puede diferir</p>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-7 col-lg-8 col-xl-9 col-map" id="map-container">
+            <div class="col-12 px-0" id="map-canvas"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectPassengerModal" tabindex="-1" role="dialog" aria-labelledby="selectPassengerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Pasajero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchPassengers()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre / Email</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_users">
+                            <td *ngIf="item['personal_info'] != null">
+                                <img src="{{item['personal_info']['image']}}" class="img-map rounded">
+                            </td>
+                            <td *ngIf="item['personal_info'] != null">
+                                <div>{{item['personal_info'] | name}}</div>
+                                <div>{{item['email']}}</div>
+                            </td>
+                            <td>
+                                <span *ngIf="item['active']" class="badge badge-success">Activo</span>
+                                <span *ngIf="item['active'] == false" class="badge badge-danger">Inactivo</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectPassenger(item)">
+                                    <b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectUsersModal" tabindex="-1" role="dialog" aria-labelledby="selectUsersModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Pasajeros</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info" role="alert" *ngIf="passenger_map.containsKey('personal_info')">
+                    <strong>{{passenger_ok}}</strong>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchPassengers()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre / Email</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody *ngIf="passengers_stops.length>0">
+                        <tr *ngFor="let item of passengers_stops">
+                            <td><img src="{{item['personal_info']['image']}}" class="img-map rounded"></td>
+                            <td>
+                                <div>{{item['personal_info'] | name}}</div>
+                                <div>{{item['email']}}</div>
+                            </td>
+                            <!--<td>-->
+                            <!--<div *ngIf="item.containsKey('routes')" class="form-radio">-->
+                            <!--<div *ngFor="let address of item['routes']">-->
+                            <!--<label class="form-radio-label">-->
+                            <!--<input type="radio" class="form-radio-input" [(ngModel)]="address_r"-->
+                            <!--value="address['address']">-->
+                            <!--{{address['address']}}-->
+                            <!--</label>-->
+                            <!--</div>-->
+                            <!--</div>-->
+                            <!--<span *ngIf="item.containsKey('routes')">-->
+                            <!--<span *ngFor="let address of item['routes']">-->
+                            <!--<input type="radio"-->
+                            <!--name="fruits"-->
+                            <!--[(ngModel)]="address_r"-->
+                            <!--value="address['address']">{{address['address']}}-->
+                            <!--</span>-->
+                            <!--</span>-->
+                            <!--</td>-->
+                            <td>
+                                <span *ngIf="item['active']" class="badge badge-success">Activo</span>
+                                <span *ngIf="!item['active']" class="badge badge-danger">Inactivo</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectAddressModal(item)">
+                                    <b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectCostCenterModal" tabindex="-1" role="dialog" aria-labelledby="selectCostCenterModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostsCenters(user_id)"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Alianza</th>
+                            <th>tags</th>
+                            <th>Tarjeta de Crédito</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_costs_centers">
+                            <td>
+                                <div>{{item['name']}}</div>
+                            </td>
+                            <td>
+                                {{item['alliance_father_id']['legal']['name']}}
+                            </td>
+                            <td>
+                                <span class="badge badge-default" *ngFor="let tag of item['tags']">{{tag}} </span>
+                            </td>
+                            <td>
+                                <span *ngIf="item['credit_card_id']!=null">{{item['credit_card_id']['number']}}</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectCostCenter(item)">
+                                    <b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectFavoritesModal" tabindex="-1" role="dialog" aria-labelledby="selectFavoritesModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Seleccionar Favorito</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchFavorites()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Dirección Inicial</th>
+                            <th>Dirección Final</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of favorite">
+                            <th scope="row">
+                                {{item['_id']| id}}
+                            </th>
+                            <td>{{item['name']}}</td>
+                            <td>{{item['start']['address']}}</td>
+                            <td>{{item['end']['address']}}</td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-primary btn-sm" title="Seleccionar" data-toggle="tooltip" data-placement="bottom" (click)="selectFavorites(item)">
+                                    <i class="material-icons">check</i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Cancelar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectAddressModal" tabindex="-1" role="dialog" aria-labelledby="selectAddressModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Seleccionar Dirección</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección Inicial</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of address">
+                            <td>{{item['name']}}</td>
+                            <td>{{item['address']}}</td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-primary btn-sm" title="Seleccionar" data-toggle="tooltip" data-placement="bottom" (click)="selectUsers(item)">
+                                    <i class="material-icons">check</i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" (click)="selectPassengerModal()"><b>Cancelar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="tripNewSuccessful" tabindex="-1" role="dialog" aria-labelledby="tripNewSuccessful"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" *ngIf="new_id != null">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmación de Nuevo Viaje</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" role="alert">
+                    Nuevo viaje #id: <strong>{{new_id | id}}</strong>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><b>Volver</b></button>
+                <button type="button" class="btn btn-outline-secondary" (click)="goTrip(new_id)"><b>Ir al viaje</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="tripNewError" tabindex="-1" role="dialog" aria-labelledby="tripNewError" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{msg_error}}</strong></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><b>Volver</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="temporalModal" tabindex="-1" role="dialog" aria-labelledby="temporalModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">JSON</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info" role="alert">
+                    <!--<strong>{{estimate}}</strong>-->
+                    <table *ngIf="estimate != null" class="table table-sm">
+                        <tr>
+                            <td><b>Tiempo Estimado</b></td>
+                            <td>{{estimate['time']}} min</td>
+                        </tr>
+                        <tr>
+                            <td><b>Distancia Estimada</b></td>
+                            <td>{{estimate['distance'] / 1000}} km</td>
+                        </tr>
+                        <tr *ngIf="estimate['price']['base_start'] > 0">
+                            <td><b>Base</b></td>
+                            <td>{{estimate['price']['base_start'] | currency:'COP':true:'1.0-0'}}</td>
+                        </tr>
+                        <tr *ngIf="estimate['price']['stops'] > 0">
+                            <td><b>Paradas</b></td>
+                            <td>{{estimate['price']['stops']-1}}</td>
+                        </tr>
+                        <tr *ngIf="estimate['price']['night'] > 0">
+                            <td><b>Nocturno/Feriado</b></td>
+                            <td>{{estimate['price']['night'] | currency:'COP':true:'1.0-0'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Pasajeros</b></td>
+                            <td>
+                                <span *ngFor="let item of estimate['passengers']">
+                                    <div>{{item['passenger_id']['personal_info']['firstname']}} {{item['passenger_id']['personal_info']['lastname']}}</div>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="form-group row">
+                    <label for="target" class="col-md-2 col-form-label" >Id de Viaje</label>
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="target_trip"
+                                class="form-control"
+                                type="text"
+                                id="target">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-success" (click)="updateTargetTrip()" [disabled]="wait_temp"><b>Convertir en Ruta</b></button>
+            </div>
+        </div>
+    </div>
+</div>

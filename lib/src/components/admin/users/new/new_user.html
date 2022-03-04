@@ -1,0 +1,452 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="RoutePaths.list_alliances.toUrl()">Alianzas</a>
+                <a class="breadcrumb-item" [routerLink]="goToViewAlliance(alliance_id ?? '')">
+                    Alianza <span>{{alliance_view['legal']['name']}}</span>
+                </a>
+                <span class="breadcrumb-item active">Nuevo {{user_view['personal_info']['firstname']}} {{user_view['personal_info']['lastname']}}</span>
+            </nav>
+        </div>
+
+        <div class="col-12">
+            <div>
+                <h4>Usuario / <span *ngIf="user_view.containsKey('_id')">{{user_view['personal_info']['firstname']}} {{user_view['personal_info']['lastname']}}</span></h4>
+            </div>
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'users').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'users')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <sel-menu_overview></sel-menu_overview>
+            <div class="container">
+
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-firstname').length > 0}">
+                                <label for="firstname" class="col-md-2 col-form-label" >Nombres</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['firstname']"
+                                            class="form-control"
+                                            type="text"
+                                            id="firstname">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-firstname').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-firstname')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-lastname').length > 0}">
+                                <label for="lastname" class="col-md-2 col-form-label" >Apellidos</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['lastname']"
+                                            class="form-control"
+                                            type="text"
+                                            id="lastname">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-lastname').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-lastname')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'identification_document-type').length > 0}">
+                                <label for="document_type" class="col-md-2 col-form-label" >Tipo de Documento</label>
+                                <div class="col-md-10">
+                                    <select id="document_type" class="form-control " [(ngModel)]="user_view['identification_document']['type']">
+                                        <option selected="selected" value="">--Tipo de Documento--</option>
+                                        <option value="CC">Cédula de Ciudadanía</option>
+                                        <option value="CE">Cédula de Extranjería</option>
+                                        <option value="NIT">Nit.</option>
+                                        <option value="PAS">Pasaporte</option>
+                                    </select>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'identification_document-type').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'document_type-type')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'identification_document-number').length > 0}" *ngIf="user_view['identification_document']!=null">
+                                <label for="number" class="col-md-2 col-form-label" >Número de Documento</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['identification_document']['number']"
+                                            class="form-control"
+                                            type="text"
+                                            id="number">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'identification_document-number').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'identification_document-number')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-phone').length > 0}">
+                                <label for="code" class="col-md-2 col-form-label" >Teléfono</label>
+                                <label for="code" class="col-md-1 col-form-label" >Código:</label>
+                                <div class="col-md-4">
+                                    <select
+                                            [(ngModel)]="user_view['personal_info']['phone_country']"
+                                            class="form-control"
+                                            type="text"
+                                            id="code">
+                                        <option value="">
+                                           -- Seleccione un país --
+                                        </option>
+                                        <option *ngFor="let code_country of adminServices.codes_countries" value="{{code_country['code']}}">
+                                           {{code_country['dial_code']}} / {{code_country['name']}}
+                                        </option>
+                                    </select>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-phone').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-phone')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                                <label for="phone" class="col-md-1 col-form-label" >Número:</label>
+                                <div class="col-md-4">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['phone']"
+                                            class="form-control"
+                                            type="text"
+                                            id="phone">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-phone').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-phone')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'email').length > 0}">
+                                <label for="email" class="col-md-2 col-form-label" >Email</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['email']"
+                                            class="form-control"
+                                            type="email"
+                                            autocomplete="off"
+                                            id="email">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'email').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'email')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'referral_code_by').length > 0}">
+                                <label for="referral_code_by" class="col-md-2 col-form-label" >Código de referido</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['referral_code_by']"
+                                            class="form-control"
+                                            type="text"
+                                            id="referral_code_by">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'referral_code_by').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'referral_code_by')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'password').length > 0}">
+                                <label for="password" class="col-md-2 col-form-label" >Contraseña</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['password']"
+                                            class="form-control"
+                                            type="password"
+                                            autocomplete="off"
+                                            id="password">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'password').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'password')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'tags').length > 0}">
+                                <label for="budget-mount" class="col-md-2 col-form-label" >Presupuesto Mensual</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['budget']['mount']"
+                                            class="form-control"
+                                            type="number"
+                                            min="0"
+                                            id="budget-mount">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'budget-mount').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'budget-mount')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12 col-form-label">
+                                    <input
+                                            [(ngModel)]="user_view['budget']['block']"
+                                            [checked]="user_view['budget']['block']"
+                                            type="checkbox"
+                                            value="1">
+                                    Bloquear peticiones cuando se exceda el presupuesto
+                                </label>
+                            </div>
+                            <div class="form-group" *ngIf="canSharedTrips">
+                                <label class="col-md-12 col-form-label">
+                                    <input
+                                            [(ngModel)]="user_view['can_share_trips']"
+                                            [checked]="user_view['can_share_trips']"
+                                            type="checkbox"
+                                            value="1">
+                                    ¿Puede tomar viajes compartidos?
+                                </label>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'type_user').length > 0}">
+                                <label for="type_user" class="col-md-2 col-form-label" >Rol</label>
+                                <div class="col-md-10">
+                                    <select id="type_user" class="form-control " [(ngModel)]="user_view['type_user']">
+                                        <option selected="selected" value="user">Usuario</option>
+                                        <option value="beneficiary">Beneficiario</option>
+                                        <option value="supervisor">Supervisor</option>
+                                        <option value="admin">Administrador</option>
+                                    </select>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'type_user').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'type_user')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-inverse">
+                                    <tr class="table-active">
+                                        <th colspan="2">Centros de Costo</th>
+                                        <th colspan="2">
+                                            <button (click)="selectCostCenterModal()" class="btn btn-outline-success float-right">
+                                                <b>Seleccionar</b>
+                                            </button>
+                                            <!--<button class="btn btn-success float-right">-->
+                                                <!--Seleccionar-->
+                                            <!--</button>-->
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let item of user_view['costs_centers_ids']">
+                                        <th scope="row">{{item['_id']| id}}</th>
+                                        <td>{{item['name']}}</td>
+                                        <td>
+                                            <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                                            <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline-danger btn-sm" (click)="user_view['costs_centers_ids'].remove(item)"><i class="material-icons">delete_forever</i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="table-responsive">
+                                <table *ngIf="user_view['type_user']=='supervisor' || user_view['type_user']=='admin'" class="table">
+                                    <thead class="thead-inverse">
+                                    <tr class="table-active">
+                                        <th colspan="4">Usuarios a Cargo</th>
+                                        <th colspan="4">
+                                            <button (click)="selectUserModal()" class="btn btn-outline-success float-right">
+                                                <b>Seleccionar</b>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    <tr colspan="12">
+                                        <th>#</th>
+                                        <th>Nombres</th>
+                                        <th>Apellidos</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Imagen</th>
+                                        <th>Estado</th>
+                                        <th class="text-center"><i class="material-icons">settings</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let item of user_view['users_ids']">
+                                        <th scope="row">{{item['_id']| id}}</th>
+                                        <td>{{item['personal_info']['firstname']}}</td>
+                                        <td>{{item['personal_info']['lastname']}}</td>
+                                        <td>{{item['email']}}</td>
+                                        <td>{{item['personal_info']['phone']}}</td>
+                                        <td><img [src]="item['personal_info']['image']" alt="{{item['personal_info']['firstname']}}" class="img-map border profile-image rounded"></td>
+                                        <td>
+                                            <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                                            <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline-danger btn-sm" (click)="user_view['users_ids'].remove(item)"><i class="material-icons">delete_forever</i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button (click)="save()" class="btn btn-outline-primary"><span><b>Crear</b></span></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="selectCostCenterModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostsCenters()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--<tr>-->
+                            <!--<td>N/A</td>-->
+                            <!--<td>Todos los centros de costo</td>-->
+                            <!--<td>-->
+                                <!--&lt;!&ndash;<span *ngIf="item['active']" class="text-success">Activo</span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span *ngIf="!item['active']" class="text-danger">Inactivo</span>&ndash;&gt;-->
+                            <!--</td>-->
+                            <!--<td class="text-center">-->
+                                <!--<button type="button" class="btn btn-primary" (click)="selectCostsCenters({'_id':'all','active':true,'name':'Todos los centros de costos'}, 'all')">Seleccionar</button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <tr *ngFor="let item of adminServices.list_costs_centers">
+                            <td>{{item['_id']| id}}</td>
+                            <td>{{item['name']}}</td>
+                            <td>
+                                <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectCostsCenters(item)">
+                                <!--<button type="button" class="btn btn-outline-primary" (click)="selectCostsCenters(item, 'single')">-->
+
+                                    <b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal usuarios-->
+
+<div class="modal" id="selectUserModal" tabindex="-1" role="dialog" aria-labelledby="selectUserModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Usuarios</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="u"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchUsers()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre/Correo</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of adminServices.list_users">
+                            <td><img [src]="item['personal_info']['image']" alt="{{item['personal_info']['firstname']}}" class="img-map border profile-image rounded"></td>
+                            <td>
+                                <div>{{item['personal_info']|name}}</div>
+                                <div>{{item['email']}}</div>
+                            </td>
+                            <td>
+                                <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary" (click)="selectUsers(item)"><b>Seleccionar</b></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

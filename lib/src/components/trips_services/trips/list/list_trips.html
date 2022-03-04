@@ -1,0 +1,21 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Vuelos</a>
+                <span class="breadcrumb-item active">Listar Vuelos</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+                <p *ngFor="let e of adminServices.errors">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <div>
+                <list-trips-details *ngIf="show_id != null" [show_id]="show_id" [personal]="personal"></list-trips-details>
+            </div>
+        </div>
+    </div>
+</div>

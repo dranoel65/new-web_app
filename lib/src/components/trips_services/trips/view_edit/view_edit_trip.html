@@ -1,0 +1,598 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid" *ngIf="trip.containsKey('_id')">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb d-inline-block">
+                <a class="breadcrumb-item" [routerLink]="goToListTrips('all')">Servicios</a>
+                <span class="breadcrumb-item active"> {{trip['_id'] | id}}</span>
+            </nav>
+            <button class="btn btn-info float-right rounded-circle" title="Actualizar" (click)="getTrip()"><i class="material-icons">cached</i></button>
+        </div>
+
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="map-canvas"></div>
+                    <div class="row label-price top-10px col-4" *ngIf="trip['status']=='normalized' || trip['status']=='cancelled'">
+                        <div class="item-label-price">
+                            <span class="statistics-size">
+                                {{trip['price']['user_total'] | money}}
+                                <span
+                                        *ngIf="trip['price']['user_total'] != trip['price']['user_subtotal']">({{trip['price']['user_subtotal'] - trip['price']['user_total'] | money}})</span>
+                            </span>
+                            <span>
+                                Total
+                            </span>
+                        </div>
+                        <div class="item-label-price">
+                            <span class="statistics-size">
+                                {{trip['statistics']['time']}} (min)
+                            </span>
+                            <span>
+                                Tiempo
+                            </span>
+                        </div>
+                        <div class="item-label-price">
+                            <span class="statistics-size">
+                                {{roundNumber((trip['statistics']['distance'] ?? 1) / 1000)}} (km)
+                            </span>
+                            <span>
+                                Distancia
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row label-price bottom-12px justify-content-around left-15px col-4">
+                        <div *ngIf="polylines.containsKey('estimate_path')">
+                            <div class="hand color rounded-circle" style="background-color: #61A749;" [ngClass]="{'no-show': polylines['estimate_path'].map == null}" (click)="setMap('estimate_path')"></div>
+                            <span>
+                                Ruta<br>sugerida
+                            </span>
+                        </div>
+                        <div (click)="setMap('current_path')" *ngIf="polylines.containsKey('current_path') && trip['status']=='started'">
+                            <div class="hand color rounded-circle" style="background-color: #0064CE;" [ngClass]="{'no-show': polylines['current_path'].map == null}"></div>
+                            <span>
+                                Ruta<br>actual
+                            </span>
+                        </div>
+                        <div *ngIf="polylines.containsKey('route_path')">
+                            <div class="hand color rounded-circle" style="background-color: #0404B4;" [ngClass]="{'no-show': polylines['route_path'].map == null}" (click)="setMap('route_path')"></div>
+                            <span>
+                                Ruta<br>normalizada
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <fieldset>
+                        <legend>
+                            <span class="legend-title">Información General</span>
+                        </legend>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Id</div>
+                            <div class="col-6 d-inline-block"><b>{{trip['_id'] | id}}</b></div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Creado</div>
+                            <div class="col-6 d-inline-block">{{trip['createdAt'] | dateformat}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2" *ngIf="trip['status'] == 'cancelled' || trip['status'] == 'unattended'">
+                            <div class="col-6 d-inline-block style-content">Finalizado</div>
+                            <div class="col-6 d-inline-block">{{trip['end']['date'] | dateformat}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Inicia Viaje</div>
+                            <div class="col-6 d-inline-block">{{trip['start']['date'] | dateformat}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2" *ngIf="trip['status'] != 'cancelled' && trip['status'] != 'unattended'
+            && trip['status'] != 'finished' && trip['status'] != 'normalized'">
+                            <div class="col-6 d-inline-block style-content">Fin Estimado</div>
+                            <div class="col-6 d-inline-block">{{trip['end']['date'] | dateformat}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2" *ngIf="trip['status'] == 'finished' || trip['status'] == 'normalized'">
+                            <div class="col-6 d-inline-block style-content">Finalizado</div>
+                            <div class="col-6 d-inline-block">{{trip['end']['finished_date'] | dateformat}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Origen</div>
+                            <div class="col-6 d-inline-block">{{trip['start']['pickup_address']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Destino</div>
+                            <div class="col-6 d-inline-block">{{trip['end']['pickup_address']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Código</div>
+                            <div class="col-6 d-inline-block">{{trip['check_code']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Tipo de Viaje</div>
+                            <div class="col-6 d-inline-block">
+                                <span *ngIf="trip['cost_center_id'] == null"><b>Personal, </b></span>
+                                <span *ngIf="trip['cost_center_id'] !=null"><b>Corporativo, </b></span>
+                                <span *ngIf="trip['type_trip'] == 'reservation'"><b>Reserva</b></span>
+                                <span *ngIf="trip['type_trip'] == 'instantly'"><b>Inmediato</b></span>
+                                <span *ngIf="trip['category'] == 'route'"><b>Ruta</b></span>
+                                <span *ngIf="trip['category'] == 'order'"><b>Domicilio</b></span>
+                            </div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Tipo de Servicio</div>
+                            <div class="col-6 d-inline-block">{{trip['type_service_id']['name']| i18n}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Región</div>
+                            <div class="col-6 d-inline-block">{{trip['region_id']['name']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Concepto</div>
+                            <div class="col-6 d-inline-block">{{trip['concept']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Estado</div>
+                            <div *ngIf="trip['status']=='created'" class="text-info col-6 d-inline-block style-content"><b>Reserva Aceptada</b></div>
+                            <div *ngIf="trip['status']=='finding'" class="text-warning col-6 d-inline-block style-content"><b>Reserva Aceptada</b></div>
+                            <div *ngIf="trip['status']=='reserving'" class="text-warning col-6 d-inline-block style-content"><b>Reserva Aceptada</b></div>
+                            <div *ngIf="trip['status']=='reserved'" class="text-primary col-6 d-inline-block style-content"><b>Reservado</b></div>
+                            <div *ngIf="trip['status']=='onWay'" class="text-primary col-6 d-inline-block style-content"><b>En Camino</b></div>
+                            <div *ngIf="trip['status']=='near'" class="text-primary col-6 d-inline-block style-content"><b>Cerca</b></div>
+                            <div *ngIf="trip['status']=='arrived'" class="text-primary col-6 d-inline-block style-content"><b>Llegado</b></div>
+                            <div *ngIf="trip['status']=='starting'" class="text-danger col-6 d-inline-block style-content"><b>En Camino</b></div>
+                            <div *ngIf="trip['status']=='started'" class="text-primary col-6 d-inline-block style-content"><b>A bordo</b></div>
+                            <div *ngIf="trip['status']=='finished'" class="text-success col-6 d-inline-block style-content"><b>Finalizado</b></div>
+                            <div *ngIf="trip['status']=='normalized'" class="text-success col-6 d-inline-block style-content"><b>Finalizado</b></div>
+                            <div *ngIf="trip['status']=='cancelled'" class="text-danger col-6 d-inline-block style-content"><b>Cancelado</b></div>
+                            <div *ngIf="trip['status']=='unattended'" class="text-danger col-6 d-inline-block style-content"><b>Sin Atender</b></div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Alianza</div>
+                            <div class="col-6 d-inline-block">{{trip['alliance_id']['legal']['name']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Centro de Costos</div>
+                            <div class="col-6 d-inline-block">{{trip['cost_center_id']['name']}}</div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-4">
+                    <fieldset *ngIf="trip['driver_id'] != null">
+                        <legend>
+                            <span class="legend-title"><img src="{{trip['driver_id']['personal_info']['image']}}"></span>
+                        </legend>
+                        <div class="col-12 style-content text-center mb-2">Conductor</div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Nombre</div>
+                            <div class="col-6 d-inline-block">{{trip['driver_id']['personal_info'] | name}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Celular</div>
+                            <div class="col-6 d-inline-block">{{trip['driver_id']['personal_info']['phone']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Vehículo</div>
+                            <div class="col-6 d-inline-block">{{trip['car_id']['info']['brand']}}-{{trip['car_id']['info']['model']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Placa</div>
+                            <div class="col-6 d-inline-block">{{trip['car_id']['info']['plate']}}</div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>
+                            <span class="legend-title"><img src="{{trip['requester_id']['personal_info']['image']}}"></span>
+                        </legend>
+                        <div class="col-12 style-content text-center mb-2">Solicitante<span *ngIf="trip['passenger_id']!=null && trip['requester_id']['_id']==trip['passenger_id']['_id'] && trip['type_trip']!='route' && trip['category']!='route'">/Pasajero</span></div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Nombre</div>
+                            <div class="col-6 d-inline-block">{{trip['requester_id']['personal_info'] | name}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Email</div>
+                            <div class="col-6 d-inline-block break-words">{{trip['requester_id']['email']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Celular</div>
+                            <div class="col-6 d-inline-block">{{trip['requester_id']['personal_info']['phone']}}</div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset *ngIf="trip['passenger_id']!=null && trip['requester_id']['_id']!=trip['passenger_id']['_id'] && trip['type_trip']!='route' && trip['category']!='route'">
+                        <legend>
+                            <span class="legend-title"><img src="{{trip['passenger_id']['personal_info']['image']}}"></span>
+                        </legend>
+                        <div class="col-12 style-content text-center mb-2">Pasajero</div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Nombre</div>
+                            <div class="col-6 d-inline-block">{{trip['passenger_id']['personal_info'] | name}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Email</div>
+                            <div class="col-6 d-inline-block break-words">{{trip['passenger_id']['email']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Celular</div>
+                            <div class="col-6 d-inline-block">{{trip['passenger_id']['personal_info']['phone']}}</div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset *ngIf="trip['guest']['name'] != null">
+                        <legend>
+                            <span class="legend-title"><img src="https://s3.amazonaws.com/miaguila.pictures/profile/900922"></span>
+                        </legend>
+                        <div class="col-12 style-content text-center mb-2">Invitado</div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Nombre</div>
+                            <div class="col-6 d-inline-block">{{trip['guest']['name']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Email</div>
+                            <div class="col-6 d-inline-block break-words">{{trip['guest']['email']}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Celular</div>
+                            <div class="col-6 d-inline-block">{{trip['guest']['phone']}}</div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset *ngIf="trip['category']=='route' || trip['category']=='order'">
+                        <legend>
+                            <span class="legend-title">{{trip['category'] === 'route' ? 'Pasajeros' : 'Domicilios'}}</span>
+                        </legend>
+                        <button type="button" (click)="passengersUpdateModal()" class="btn btn-outline-primary col-12 mb-3" *ngIf="trip['category']=='route' || trip['category']=='order'"
+                                [disabled]="block_passengers">
+                            <b>Editar Paradas</b>
+                        </button>
+                        <div class="col-12" *ngFor="let passenger of trip['passengers']; let i = index">
+                            <div class="col-12 style-label mb-2 background--extra-dark-snow">
+                                <div class="col-6 d-inline-block style-content">Nombre</div>
+                                <div class="col-6 d-inline-block">{{passenger['passenger_id']['personal_info'] | name}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2">
+                                <div class="col-6 d-inline-block style-content">Email</div>
+                                <div class="col-6 d-inline-block break-words">{{passenger['passenger_id']['email']}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2">
+                                <div class="col-6 d-inline-block style-content">Celular</div>
+                                <div class="col-6 d-inline-block">{{passenger['passenger_id']['personal_info']['phone']}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2">
+                                <div class="col-6 d-inline-block style-content">Dirección</div>
+                                <div class="col-6 d-inline-block">{{passenger['pickup_address']}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2">
+                                <div class="col-6 d-inline-block style-content">Estado</div>
+                                <div class="col-6 d-inline-block">{{passenger['check'] | statusItemPassengersUser}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2">
+                                <div class="col-6 d-inline-block style-content">Código</div>
+                                <div class="col-6 d-inline-block">{{passenger['check_code']}}</div>
+                            </div>
+                            <div class="col-12 style-label mb-2" *ngIf="trip['status']!='cancelled' && trip['status']!='normalized' && trip['status']!='unattended' && trip['status']!='finished' && passenger['check']!='cancelled' && passenger['check']!='onboard' && passenger['check']!='completed'">
+                                <div class="col-6 d-inline-block style-content">Anular</div>
+                                <div class="col-6 d-inline-block" *ngIf="user['_id']==trip['requester_id']['_id'] || user['_id']==trip['passenger_id']['id'] || user['_id']==passenger['passenger_id']['_id'] || user['type_user']=='admin' || user['type_user']!='user'">
+                                    <button class="btn btn-danger float-right" (click)="confirmChangeModal(passenger)"><i class="material-icons">not_interested</i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-4">
+                    <div *ngIf="trip['status']!='cancelled' && trip['status']!='normalized' && trip['status']!='unattended' && trip['status']!='finished' && trip['driver_id']!=null" class="mb-3">
+                        <div *ngIf="trip['status']!='started'"><h2><b>Tiempo estimado de llegada: {{(trip['arrived']['estimate_time']/60).round()}} Min.</b></h2></div>
+                        <div *ngIf="trip['status']=='started'"><h2><b>Tiempo estimado de llegada: {{(trip['finished']['estimate_time']/60).round()}} Min.</b></h2></div>
+                        <!--<div><h2><b>Fecha estimada: {{estimate_date}}</b></h2></div>-->
+                    </div>
+
+                    <button class="btn btn-outline-success col-md-12 mb-3" (click)="sendCorrectionModal()"><b>Revisar Viaje/Tarifa</b> </button>
+
+                    <button type="button" (click)="flagAction = 'cancel'" class="btn btn-danger btn-block mb-3" *ngIf="trip['status']=='created' || trip['status']=='finding' || trip['status']=='reserving' || trip['status']=='reserved' || trip['status']=='starting' || trip['status']=='onWay' ||  trip['status']=='near' || trip['status']=='arrived'">
+                        <b>Cancelar</b>
+                    </button>
+
+                    <div *ngIf="flagAction=='cancel'" class="mt-4">
+                        <div class="text-center">
+                            <p>¿Está seguro que desea Cancelar el viaje?</p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary" (click)="setCancelTrip()"><b>Si</b></button>
+                                    <button (click)="flagAction=''" type="button" class="btn btn-danger"><b>No</b></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <fieldset *ngIf="trip['status']=='normalized' || trip['status']=='cancelled'">
+                        <legend>
+                            <span class="legend-title">Pasajero</span>
+                        </legend>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Valor Viaje</div>
+                            <div class="col-6 d-inline-block text-right">{{(trip['price']['trip'] + (trip['price']['twenty_twenty_surcharge'] ?? 0)) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">- {{trip['price']['discounts_percentage']}}% Descuento</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['discounts'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">{{trip['price']['comission_alliance_percentage']}}% Comisión Alianza</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['comission_alliance'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">{{trip['price']['feed_trip_percentage']}}% Comisión Alianza</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['feed_trip'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Subtotal</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['user_subtotal'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">PromoCode</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['promo'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Total</div>
+                            <div class="col-6 d-inline-block text-right">{{trip['price']['user_total'] | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                    </fieldset>
+
+                    <span *ngIf="trip['status']=='normalized'">
+                        <fieldset>
+                            <legend>
+                                <span class="legend-title">Detalle Zona</span>
+                            </legend>
+                            <div class="" *ngFor="let track of trip['tracks']">
+                                <div class="col-12 style-content mb-2 background--extra-dark-snow">
+                                    {{track['name']}}
+                                </div>
+                                <div class="col-12 style-label mb-2">
+                                    <div class="col-6 d-inline-block style-content">{{track['time']}} (min) * {{updateFare2020(track['minute']) | currency:'COP':true:'1.0-0'}}</div>
+                                    <div class="col-6 d-inline-block text-right">{{track['time'] * updateFare2020(track['minute']) | currency:'COP':true:'1.0-0'}}</div>
+                                </div>
+                                <div class="col-12 style-label mb-2">
+                                    <div class="col-6 d-inline-block style-content">{{roundNumber((track['distance'] ?? 1) / 1000)}} (km) * {{updateFare2020(track['kilometer']) | currency:'COP':true:'1.0-0'}}</div>
+                                    <div class="col-6 d-inline-block text-right">{{roundNumber((track['distance'] ?? 1) / 1000) * updateFare2020(track['kilometer']) | currency:'COP':true:'1.0-0'}}</div>
+                                </div>
+                                <div class="col-12 style-label mb-2">
+                                    <div class="col-6 d-inline-block style-content">Cambio de zona</div>
+                                    <div class="col-6 d-inline-block text-right">{{updateFare2020(track['change_zone']) | currency:'COP':true:'1.0-0'}}</div>
+                                </div>
+                                <div class="col-12 style-label mb-2">
+                                    <div class="col-6 d-inline-block style-content">Subtotal</div>
+                                    <div class="col-6 d-inline-block text-right">{{updateFare2020(track['value']) | currency:'COP':true:'1.0-0'}}</div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </span>
+
+                    <fieldset class="space-white" *ngIf="trip['status'] == 'normalized' || trip['status'] == 'cancelled'">
+                        <legend>
+                            <span class="legend-title">Cargos</span>
+                        </legend>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Valor Viaje</div>
+                            <div class="col-6 d-inline-block text-right">{{updateFare2020(trip['charges']['base_start']) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Base Final</div>
+                            <div class="col-6 d-inline-block text-right">{{updateFare2020(trip['charges']['base_end']) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Nocturno/ Sábado/ Festivo</div>
+                            <div class="col-6 d-inline-block text-right">{{updateFare2020(trip['charges']['night']) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Total zonas</div>
+                            <div class="col-6 d-inline-block text-right">{{updateFare2020(trip['charges']['tracks_value']) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                        <div class="col-12 style-label mb-2">
+                            <div class="col-6 d-inline-block style-content">Total viaje</div>
+                            <div class="col-6 d-inline-block text-right">{{updateFare2020(trip['price']['trip']) | currency:'COP':true:'1.0-0'}}</div>
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmChangeModal" tabindex="-1" role="dialog" aria-labelledby="confirmChangeModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Confirmar</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body alert alert-danger" role="alert">
+                <div class=""><strong>¿Esta seguro/a de cambiar el estado de la ruta del usurio?</strong></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal"><b>Cancelar</b></button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" (click)="changeStatus()"><b>Confirmar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal update passenger-->
+
+<div class="modal" id="passengersUpdateModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Pasajeros</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" *ngIf="trip['type_trip']=='route' || trip['category']=='route'">
+                <div class="container-fluid down-space">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr class="col-12">
+                                <th colspan="12">Editar Usuarios</th>
+                            </tr>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre / Email</th>
+                                <th class="text-center"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let itemModal of trip['passengers']">
+                                <td><img [src]="itemModal['passenger_id']['personal_info']['image']"
+                                         alt="{{itemModal['passenger_id']['personal_info']['firstname']}}"
+                                         class="img-map border profile-image rounded"></td>
+                                <td>
+                                    <div>{{itemModal['passenger_id']['personal_info']['firstname']}}
+                                        {{itemModal['passenger_id']['personal_info']['lastname']}}
+                                    </div>
+                                    <div>{{itemModal['passenger_id']['email']}}</div>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                            (click)="removePassenger(itemModal)" title="Eliminar"><i class="material-icons">delete_forever</i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-3 text-center" style="max-width: none">
+                        <button type="button" class="btn btn-outline-info" (click)="updatePassengers()"><b>Guardar Cambios</b></button>
+                    </div>
+                </div>
+                <div class="container-fluid up-space">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <input
+                                    placeholder="Buscar usuario que desea agregar..."
+                                    [(ngModel)]="passenger_q"
+                                    class="form-control"
+                                    type="text">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-primary" (click)="searchPassagers()"><b>Buscar</b></button>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" *ngIf="alertLimitPassengers != null">
+                        <strong>{{alertLimitPassengers}}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr class="col-12">
+                                <th colspan="12">Agregar Usuario</th>
+                            </tr>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre / Email</th>
+                                <th>Estado</th>
+                                <th class="text-center"><i class="material-icons">settings</i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let addItem of adminServices.list_users">
+                                <td><img [src]="addItem['personal_info']['image']"
+                                         alt="{{addItem['personal_info']['firstname']}}"
+                                         class="img-map border profile-image rounded"></td>
+                                <td>
+                                    <div>{{addItem['personal_info']['firstname']}}
+                                        {{addItem['personal_info']['lastname']}}
+                                    </div>
+                                    <div>{{addItem['email']}}</div>
+                                </td>
+                                <td>
+                                    <span *ngIf="addItem['active']" class="text-success"><b>Activo</b></span>
+                                    <span *ngIf="!addItem['active']" class="text-danger"><b>Inactivo</b></span>
+                                </td>
+                                <td class="text-center">
+                                    <span *ngIf="addItem['routes']!=null">
+                                        <button type="button" class="btn btn-outline-primary" *ngIf="addItem['routes'].length>0"
+                                                (click)="addPassenger(addItem)"><b>Agregar</b>
+                                        </button>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="sendCorrectionModal" tabindex="-1" role="dialog" aria-labelledby="sendCorrectionModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" *ngIf="alert_message=='show'">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Descripción de la solicitud</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="correction_request"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="sendCorrectionRequest()"><b>Enviar</b></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-content" *ngIf="alert_message=='success'">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Solicitud realizada</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-12 alert-success" style="padding:15px;">
+                        <b>La solicitud fue enviada de manera exitosa.</b>
+                    </div>
+                </div>
+                <div class="col-2" style="margin:0 auto">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><b>Aceptar</b></button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-content" *ngIf="alert_message=='error'">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Error</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-12 alert-danger">
+                        <div class="col-md-12" style="padding:15px;">
+                            <b>El mensaje debe tener mas de 10 caracteres.</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2" style="margin:0 auto">
+                    <button type="button" class="btn btn-outline-primary" (click)="alert_message='show'"><b>Aceptar</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

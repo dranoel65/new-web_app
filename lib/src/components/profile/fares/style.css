@@ -1,0 +1,30 @@
+
+#map-canvas {
+    height: 500px;
+    margin: 0px;
+    padding: 0px
+}
+
+.import-textarea {
+    height: 200px;
+}
+
+.import-button {
+    margin-top: 10px;
+}
+
+.img-map {
+    height: 200px;
+}
+
+.space {
+    padding-top: 21px;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

@@ -1,0 +1,38 @@
+/*.map-area {
+    width: 500px;
+    height: 400px;
+    margin: 10px;
+}
+
+#mapArea {
+    width: 500px;
+    height: 400px;
+    margin: 10px;
+}*/
+
+
+#map-canvas {
+    height: 500px;
+    margin: 0px;
+    padding: 0px
+}
+
+.import-textarea {
+    height: 200px;
+}
+
+.import-button {
+    margin-top: 10px;
+}
+
+.img-map {
+    height: 200px;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

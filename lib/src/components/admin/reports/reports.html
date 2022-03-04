@@ -1,0 +1,24 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <span class="breadcrumb-item active">Reportes</span>
+            </nav>
+        </div>
+    </div>
+    <div>
+        <h3><b>Reportes Metabase</b></h3><br>
+        <br/>
+        <div >
+            <iframe id="mb_iframe"
+                    height="800px"
+                    width="100%"
+                    frameBorder="0"
+                    style="position: absolute;overflow:hidden;"
+                    [(src)]="finalUrl"
+            >
+            </iframe>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+text-success {
+    color: #2ac46c;
+}
+
+text-danger {
+    color: #df1843;
+}
+
+.row-body {
+    padding: 5px 10px;
+}
+
+.padding-item {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}
+
+@media only screen and (max-width: 790px) {
+    .col-4 {
+        max-width: 100%;
+        display: inline-block;
+        flex: inherit;
+    }
+}

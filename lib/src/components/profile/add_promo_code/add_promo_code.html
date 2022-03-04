@@ -1,0 +1,92 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <span class="breadcrumb-item">Perfil</span>
+                <span class="breadcrumb-item active">Promociones</span>
+            </nav>
+        </div>
+        <div class="col-12">
+            <div>
+                <h1>Código Promocional</h1>
+            </div>
+            <div class="container">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'code').length > 0}">
+                                <label for="code" class="col-md-2 col-form-label">Código</label>
+                                <div class="col-md-10">
+                                    <input
+                                        [(ngModel)]="code"
+                                        (change)="change()"
+                                        class="form-control"
+                                        type="text"
+                                        id="code">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'code').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'code')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'expiration').length > 0}">
+                                <label for="expiration" class="col-md-2 col-form-label">Vencimiento</label>
+                                <div class="col-md-10">
+                                    <input
+                                        [(ngModel)]="expiration"
+                                        class="form-control"
+                                        type="text"
+                                        id="expiration"
+                                        disabled>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'expiration').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'expiration')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'description').length > 0}">
+                                <label for="description" class="col-md-2 col-form-label">Descripción</label>
+                                <div class="col-md-10">
+                                    <textarea disabled [maxlength]="200" type="text" step="2" [(ngModel)]="description" class="form-control concept-textarea" name="description" id="description"></textarea>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'description').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'description')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 days-height alert alert-danger" align="justify"
+                                 *ngIf="err">
+                                <p>
+                                    <b>Código Invalido</b>
+                                </p>
+                            </div>
+
+                            <div class="card-footer text-center">
+                                <button (click)="addPromoCode()" class="btn btn-outline-primary"><b>Agregar</b></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content  alert alert-success">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Su código fue registrado con éxito</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

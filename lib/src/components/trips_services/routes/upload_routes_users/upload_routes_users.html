@@ -1,0 +1,167 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Rutas</a>
+                <a class="breadcrumb-item">Subir Usuarios</a>
+            </nav>
+        </div>
+
+        <div class="col-12">
+            <div>
+                <h1>Subir Usuarios </h1>
+                <a href="https://s3.amazonaws.com/excel.miaguila.com/templates/Rutas+masivas+Mi+Aguila.xlsx">Descargar ejemplo</a>
+            </div>
+            <!--<div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'upload_users_routes').length > 0">-->
+                <!--<p *ngFor="let e of (adminServices.errors | getErrors:'upload_users_routes')">-->
+                    <!--{{e['errorMessage']}}-->
+                <!--</p>-->
+            <!--</div>-->
+            <div class="card">
+                <div class="card-block">
+                    <div class="card-text">
+                        <div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'dat').length > 0}">
+                                <label class="col-md-12 col-form-label">Cargar Archivo</label>
+                                <div class="col-md-12">
+                                <span colspan="2">
+                                    <load-files> </load-files>
+                                </span>
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'dat').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'dat')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-map aling-center">
+                                <div id="space-canvas">
+                                    <output id="list"></output>
+                                </div>
+                            </div>
+                            <div class="card-footer row justify-content-center">
+<!--                                <span class="col-2 m-2 d-flex align-items-center text-center">Seleccionar Método:</span>-->
+<!--                                <select class="col-2 m-2" [(ngModel)]="algorithm">-->
+<!--                                    <option selected="selected" value="0">Algoritmo 1</option>-->
+<!--                                    <option value="1">Algoritmo 2</option>-->
+<!--                                </select>-->
+                                <button type="button" class="btn btn-outline-primary col-2 m-2" (click)="save()" [disabled]="uploading"><b>Cargar Usuarios</b></button>
+                                <button class="btn btn-outline-info col-2 m-2"  [routerLink]="RoutePaths.list_routes_user_groups.toUrl()"><b>Ir a Crear Rutas</b></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block" *ngIf="table_view">
+                        <span class="text-center drop-zone">Grupos válidos creados: {{data['groups'].length}}</span>
+                    </div>
+                    <div class="table-responsive" *ngIf="table_view">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th colspan="4" class="trcenter"><h3><b>Lista de usuarios que no pudieron ser agrupados</b></h3></th>
+                            </tr>
+                            <tr>
+                                <th class="trcenter">Alianza - Centros de Costo</th>
+                                <th class="trcenter">Dirección Común</th>
+                                <th class="trcenter">Tipo de Ruta</th>
+                                <!--<th class="text-center">Fecha</th>-->
+                                <th class="trcenter">Pasajero</th>
+                            </tr>
+                            </thead>
+                            <tbody *ngIf="data['not_grouped'].length>0">
+                            <tr *ngFor="let item of data['not_grouped']; let i=index">
+                                <td  class="trcenter" *ngIf="item['allianceAddress'] != null">
+                                    {{item['allianceAddress']['address']}}
+                                </td>
+                                <td  class="trcenter" *ngIf="item['typeRoute'] != null">
+                                    <span *ngIf="item['typeRoute']=='oneforall'">Origen Común</span>
+                                    <span *ngIf="item['typeRoute']=='allforone'">Destino Común</span>
+                                    <br>
+                                    {{item['date']|dateformat}}
+                                </td>
+                                <!--<td *ngIf="item['date'] != null">-->
+                                <!--{{item['date'] | dateformat}}-->
+                                <!--</td>-->
+                                <td  class="trcenter" *ngIf="item['passengers'].length>0">
+                                    <div *ngFor="let p of item['passengers']">
+                                        {{p['passenger']['personal_info']['firstname']}} {{p['passenger']['personal_info']['lastname']}}<br>
+                                        {{p['passenger']['email']}}<br>
+                                        {{p['address']['address']}}
+                                        <hr/>
+                                    </div>
+                                </td>
+                                <td  class="trcenter">
+                                    Alianza: {{item['alliance']['legal']['name']}}
+                                    <hr/>
+                                    Centro de Costos: {{item['costCenter']['name']}}
+                                </td>
+                                <!--<td class="text-center">-->
+                                    <!--<button class="btn btn-outline-danger btn-sm" (click)="activateModal(item)">-->
+                                        <!--Crear Ruta-->
+                                    <!--</button>-->
+                                    <!--<br>-->
+                                    <!--<button class="btn btn-outline-primary btn-sm" (click)="previewModal(item)">-->
+                                        <!--Previsualizar-->
+                                    <!--</button>-->
+                                <!--</td>-->
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive" *ngIf="table_view">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th colspan="3" class="trcenter"><h3><b>Lista de registros que contienen errores</b></h3></th>
+                            </tr>
+                            <tr>
+                                <th class="trcenter">Código</th>
+                                <th class="trcenter">Mensaje de error</th>
+                                <th class="trcenter">Campo</th>
+                            </tr>
+                            </thead>
+                            <tbody *ngIf="data['errors'].length>0">
+                            <tr *ngFor="let item of data['errors']">
+                                <th class="trcenter">{{item['error']['code']}}</th>
+                                <td class="trcenter">{{item['error']['errorMessage']}}</td>
+                                <td class="trcenter">
+                                    <span *ngIf="item['error'].containsKey('email')">{{item['error']['email']}}</span>
+                                    <span *ngIf="item['error'].containsKey('alliance')">{{item['error']['alliance']}}</span>
+                                    <!--<span *ngIf="item['error'].containsKey('email')"></span>-->
+                                    <!--<span *ngIf="item['error'].containsKey('email')"></span>-->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Modals -->
+
+<div class="modal" id="errorFileModal" tabindex="-1" role="dialog" aria-labelledby="errorFileModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="deactivateModal"><b>Error</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 alert alert-danger" align="justify">
+                    <h4>El archivo que intenta subir tiene un formato inválido, asegurese de usar los formatos .xls y .xlsx.</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

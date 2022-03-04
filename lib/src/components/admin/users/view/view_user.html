@@ -1,0 +1,225 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Administración</a>
+                <a class="breadcrumb-item" [routerLink]="RoutePaths.list_alliances.toUrl()">Alianzas</a>
+                <a class="breadcrumb-item " [routerLink]="goToViewAlliance(alliance_id ?? '')">
+                    Alianza <span>{{user_view['alliance_id']['legal']['name']}}</span>
+                </a>
+                <span class="breadcrumb-item active">{{user_view['personal_info']['firstname']}} {{user_view['personal_info']['lastname']}}</span>
+            </nav>
+        </div>
+
+        <div class="col-12">
+            <div>
+                <a class="btn btn-outline-primary float-right" [routerLink]="goToEditUser(user_view['_id'])" data-toggle="tooltip" data-placement="bottom"
+                   title="Editar"><i class="material-icons"><b>mode_edit</b></i></a>
+                <h1>Usuario / <span *ngIf="user_view.containsKey('_id')">{{user_view['personal_info']['firstname']}} {{user_view['personal_info']['lastname']}}</span></h1>
+            </div>
+            <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'errorAny').length > 0">
+                <p *ngFor="let e of (adminServices.errors | getErrors:'errorAny')">
+                    {{e['errorMessage']}}
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <th>ID</th>
+                                <td>{{user_view['_id'] | id}}</td>
+                            </tr>
+                            <tr>
+                                <th>Correo</th>
+                                <td>{{user_view['email']}}</td>
+                            </tr>
+                            <tr class="table-active">
+                                <th colspan="2">Información Personal</th>
+                            </tr>
+                            <tr>
+                                <th>Imagen</th>
+                                <td *ngIf="user_view['personal_info']['image'] != null">
+                                    <img [src]="user_view['personal_info']['image']" alt="{{user_view['personal_info']['firstname']}}" class="img-map border profile-image rounded">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Nombres</th>
+                                <td>{{user_view['personal_info']['firstname']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Apellidos</th>
+                                <td>{{user_view['personal_info']['lastname']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Tipo de Documento</th>
+                                <td *ngIf="user_view['identification_document']!=null">
+                                    <span *ngIf="user_view['identification_document']['type']==''"></span>
+                                    <span *ngIf="user_view['identification_document']['type']=='CC'">Cédula de Ciudadanía</span>
+                                    <span *ngIf="user_view['identification_document']['type']=='CE'">Cédula de Extranjería</span>
+                                    <span *ngIf="user_view['identification_document']['type']=='NIT'">Nit.</span>
+                                    <span *ngIf="user_view['identification_document']['type']=='PAS'">Pasaporte</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Número de Documento</th>
+                                <td *ngIf="user_view['identification_document']!=null">{{user_view['identification_document']['number']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Célular</th>
+                                <td>{{user_view['personal_info']['phone']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Rol</th>
+                                <td>{{user_view['type_user'] | i18n}}</td>
+                            </tr>
+                            <tr class="table-active" *ngIf="user_view.containsKey('budget')">
+                                <th colspan="2">Presupuesto</th>
+                            </tr>
+                            <tr *ngIf="user_view.containsKey('budget')">
+                                <th>Presupuesto Mensual</th>
+                                <td>{{user_view['budget']['mount'] | currency:'COP':true:'1.0-0'}}</td>
+                            </tr>
+                            <tr *ngIf="user_view.containsKey('budget')">
+                                <th colspan="2" *ngIf="user_view['budget']['block']">No excede el presupuesto</th>
+                                <th colspan="2" *ngIf="user_view['budget']['block'] == false">Excede el presupuesto</th>
+                            </tr>
+                            <tr>
+                                <th>¿Puede tomar viajes compartidos?</th>
+                                <td>
+                                    <span *ngIf="user_view.containsKey('can_share_trips')">
+                                        <span *ngIf="!user_view['can_share_trips']">No</span>
+                                        <span *ngIf="user_view['can_share_trips']">Si</span>
+                                    </span>
+                                    <span *ngIf="!user_view.containsKey('can_share_trips')">No</span>
+                                </td>
+                            </tr>
+                            <tr class="table-active">
+                                <th colspan="2">Alianza</th>
+                            </tr>
+                            <tr>
+                                <th>Nombre</th>
+                                <td>{{user_view['alliance_id']['legal']['name']}}</td>
+                            </tr>
+                            <tr class="table-active" *ngIf="user_view['type_user']!='user'">
+                                <th colspan="2">Centros de Costo</th>
+                            </tr>
+                            <tr *ngIf="user_view['type_user']!='user'">
+                                <th colspan="2">
+                                    <div class="col-md-4 space-list" *ngFor="let item of user_view['costs_centers_ids']">
+                                        {{user_view['alliances'][item['alliance_father_id']]}} - <a [routerLink]="goToEditCostCenter(item['_id'])">{{item['name']}}</a>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr class="table-active" *ngIf="user_view['type_user']=='supervisor' || user_view['type_user']=='admin'">
+                                <th colspan="2">Usuarios a cargo</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">
+                                    <div class="card-block p-0">
+                                        <div class="card-text p-0">
+                                            <div class="table-responsive p-0">
+                                                <table *ngIf="user_view['type_user']=='supervisor' || user_view['type_user']=='admin'" class="table">
+                                                    <thead class="thead-inverse">
+                                                    <tr colspan="12">
+                                                        <th>#</th>
+                                                        <th>Nombres</th>
+                                                        <th>Apellidos</th>
+                                                        <th>Email</th>
+                                                        <th>Rol</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr *ngFor="let item of user_view['users_ids']">
+                                                        <th scope="row">
+                                                            <a [routerLink]="goToViewUser(item['_id'])">{{item['_id']| id}}</a>
+                                                        </th>
+                                                        <td>{{item['personal_info']['firstname']}}</td>
+                                                        <td>{{item['personal_info']['lastname']}}</td>
+                                                        <td>{{item['email']}}</td>
+                                                        <td>{{item['type_user'] | i18n}}</td>
+                                                        <td>
+                                                            <span *ngIf="item['active']" class="text-success"><b>Activo</b></span>
+                                                            <span *ngIf="!item['active']" class="text-danger"><b>Inactivo</b></span>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr class="table-active" *ngIf="user['alliance_id']['routes_active']">
+                                <th colspan="2">Direcciones</th>
+                            </tr>
+                            <tr *ngIf="user['alliance_id']['routes_active']">
+                                <th colspan="2">
+                                    <div class="card-block p-0">
+                                        <div class="card-text p-0">
+                                            <div class="table-responsive p-0">
+                                                <table class="table">
+                                                    <thead class="thead-inverse">
+                                                    <tr colspan="12">
+                                                        <th>Tipo</th>
+                                                        <th>Nombre</th>
+                                                        <th>Posicion</th>
+                                                        <th>Direccion</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr *ngFor="let item of user_view['routes']">
+                                                        <td class="text-center"><i class="material-icons">settings</i></td>
+                                                        <td>{{item['name']}}</td>
+                                                        <td>{{item['position']}}</td>
+                                                        <td>{{item['address']}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr class="table-active" *ngIf="user['alliance_id']['routes_active']">
+                                <th colspan="2">Dirección de la Oficina</th>
+                            </tr>
+                            <tr *ngIf="user['alliance_id']['routes_active']">
+                                <th colspan="2">
+                                    <div class="card-block p-0">
+                                        <div class="card-text p-0">
+                                            <div class="table-responsive p-0">
+                                                <table class="table">
+                                                    <thead class="thead-inverse">
+                                                    <tr colspan="12">
+                                                        <th>Tipo</th>
+                                                        <th>Nombre</th>
+                                                        <th>Posicion</th>
+                                                        <th>Direccion</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody *ngIf="user_view['work_address']!=null">
+                                                    <tr *ngIf="user_view['work_address']['position']!=null">
+                                                        <td class="text-center"><i class="material-icons">settings</i></td>
+                                                        <td>{{user_view['work_address']['name']}}</td>
+                                                        <td>{{user_view['work_address']['position']}}</td>
+                                                        <td>{{user_view['work_address']['address']}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

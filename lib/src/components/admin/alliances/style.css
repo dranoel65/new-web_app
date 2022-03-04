@@ -1,0 +1,40 @@
+.table-sm td{
+    padding-left:0px;
+}
+
+
+.btn-outline-primary:hover {
+    background-color: #00cc99;
+    color:white;
+}
+
+.btn-outline-primary {
+    border-color: #00cc99;
+    color:#00cc99;
+}
+
+text-success {
+    color: #2ac46c;
+}
+
+text-danger {
+    color: #df1843;
+}
+
+.hand {
+    cursor: pointer;
+}
+.mirror-text{
+    transform: scale(-1, 1);
+}
+.btn{
+    margin-left: 10px;
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

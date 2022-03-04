@@ -1,0 +1,760 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <a class="breadcrumb-item">Estadísticas</a>
+                <span class="breadcrumb-item active">Niveles de Servicio</span>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="alert alert-danger" role="alert" *ngIf="(adminServices.errors | getErrors:'errorAny').length > 0">
+            <p *ngFor="let e of (adminServices.errors | getErrors:'errorAny')">
+                {{e['errorMessage']}}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <!--<div class="col-lg-12">-->
+        <h3 class="col-lg-12"><b>Parámetros</b></h3><br>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="sections['kpi_general']"
+                                   value="1">
+                            Servicios
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-lg-2">
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="sections['kpi_invoices']"
+                                   value="1">
+                            Facturación
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-lg-2">
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="sections['kpi_alliances']"
+                                   value="1">
+                            Alianzas
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col-lg-12">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="avancedTab">
+                    <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="#tab-1" id="active">Hora/Día</a>-->
+                    <!--</li>-->
+                    <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="#tab-2">Hora/Semanal</a>-->
+                    <!--</li>-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab1">Hora</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab2" id="active">Día</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab3">Semana</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab4">Semanal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab5">Mes</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-block">
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade" id="tab-1">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('daykly', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar por Hora/Día </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab-2">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('weeklyday', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar por Hora/Semanal </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab1">
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('hour', 1)"
+                                            [disabled]="loading">
+                                        Buscar por Hora <i *ngIf="loading">..Cargando</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab2">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('day', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar por Día </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab3">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('week', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar por Semana </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab4">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('weekly', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar Semanal </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab5">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="date" placeholder="dd/mm/aaaa" [(ngModel)]="s['fi']" min="2015-01-01"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <input type="number" [(ngModel)]="s['lapse']" min="0" max="10"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="form-group">
+                                    <button class="form-control btn btn-outline-primary btn-block" type="button" (click)="searchStatisticsConnected('month', s['lapse'])"
+                                            [disabled]="loading">
+                                        <b>Buscar por Mes </b><i *ngIf="loading"><b>..Cargando</b></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-4">
+                            <div *ngIf="!passenger_item.containsKey('_id')" class="form-group">
+                                    <button (click)="selectPassengersModal()" class="btn btn-outline-success btn-block">
+                                        <b>Seleccionar Pasajero</b>
+                                    </button>
+                            </div>
+                            <div *ngIf="passenger_item.containsKey('_id')" class="data-search">
+                                <div class="title">Pasajero</div>
+                                <img [src]="passenger_item['personal_info']['image']"
+                                     alt="{{passenger_item['personal_info']['firstname']}}"
+                                     class="img-map border profile-image rounded">
+
+                                <div class="delete-data">
+                                    <button class="btn btn-outline-danger btn-sm float-right" (click)="deleteThis('passenger')">
+                                        <i class="material-icons delete">
+                                            cancel
+                                        </i>
+                                    </button>
+                                </div>
+                                <div>{{passenger_item['personal_info']['firstname']}}
+                                    {{passenger_item['personal_info']['lastname']}}
+                                </div>
+                                <div>{{passenger_item['email']}}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group" *ngIf="!alliance_item.containsKey('_id')">
+
+                                    <button (click)="selectAllianceModal()" class="btn btn-outline-success btn-block">
+                                        <b>Seleccionar Alianza</b>
+                                    </button>
+                            </div>
+                            <div *ngIf="alliance_item.containsKey('_id')" class="data-search">
+                                <div class="title">Alianza</div>
+                                <div class="delete-data">
+                                    <button class="btn btn-outline-danger btn-sm float-right" (click)="deleteThis('alliance')">
+                                        <i class="material-icons delete">
+                                            cancel
+                                        </i>
+                                    </button>
+                                </div>
+                                <div>{{alliance_item['legal']['name']}}</div>
+                                <div>ID: {{alliance_item['_id']|id}}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-4">
+                            <div *ngIf="!costcenter_item.containsKey('_id')" class="form-group">
+                                <button (click)="selectCostCenterModal()" type="button" class="btn btn-outline-success btn-block">
+                                    <b>Seleccionar Centro de costo</b>
+                                </button>
+                            </div>
+                            <div *ngIf="costcenter_item.containsKey('_id')" class="data-search">
+                                <div class="title">Centro de costos</div>
+                                <div>
+                                    <div class="delete-data">
+                                        <button class="btn btn-outline-danger btn-sm float-right" (click)="deleteThis('costcenter')">
+                                            <i class="material-icons delete">
+                                                cancel
+                                            </i>
+                                        </button>
+                                    </div>
+                                    {{costcenter_item['name']}} ({{costcenter_item['_id']|id}})
+                                </div>
+                                <div>
+                                    {{costcenter_item['alliance_father_id']['legal']['name']}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="group == 'daykly' || group == 'weeklyday'">
+                        <!--Normales-->
+                        <div class="table-responsive" *ngFor="let section of sections_r">
+                            <h4>{{ section | i18nR}}</h4>
+                            <table class="table table-striped table-sm table-bordered" *ngFor="let kpi of keys_valid[section]">
+                                <thead class="thead-inverse">
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>KPI</th>
+                                    <th *ngFor="let xf of report[section]['fragments']; let xi=index">
+                                        <span>{{xf[0] | dateformat2:'M/D ddd'}}</span>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let f of report[section]['fragments'][0]; let i=index">
+                                <tr *ngFor="let k of keys_valid[section]; let ki=index">
+                                    <th *ngIf="ki==0" [attr.rowspan]="keys_valid[section].length">{{f |
+                                        dateformat2:'HH:mm'}}
+                                    </th>
+                                    <td>{{k['name'] | i18nR}}</td>
+                                    <td *ngFor="let xf of report[section]['fragments']; let xi=index"
+                                        class="text-right">
+                                        <div class="nowrap"
+                                             *ngIf="report.containsKey(section) && report[section]['r'][kpi['name']].containsKey(xf[i])">
+                                            <span *ngIf="k['format'] == 'money'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']] | currency:'COP':true:'1.0-0'}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'ceil'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']] | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'km'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']]/1000 | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'hour'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']]/60 | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'avg_km'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']]/1000 | dec2 }} kms.
+                                            </span>
+                                            <span *ngIf="k['format'] == 'avg_min'">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']] | ceil}} min.
+                                            </span>
+                                            <span *ngIf="k['format'] == ''">
+                                                {{report[section]['r'][kpi['name']][xf[i]][k['name']]}}
+                                            </span>
+                                        </div>
+                                        <div *ngIf="!report.containsKey(section) || !report[section]['r'][kpi['name']].containsKey(xf[i])">
+                                            0
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="group != 'daykly' && group != 'weeklyday'">
+                        <!--Normales-->
+                        <div class="table-responsive" *ngFor="let section of sections_r">
+                            <h4>{{ section | i18nR}}</h4>
+                            <table class="table table-sm table-bordered table-hover">
+                                <thead class="thead-inverse">
+                                <tr>
+                                    <th>KPI</th>
+                                    <th *ngFor="let f of report[section]['fragments'][0]">
+                                        <span *ngIf="group=='hour'">{{f | dateformat2:'M/D HH:mm'}}</span>
+                                        <span *ngIf="group=='day'">{{f | dateformat2:'M/D ddd'}}</span>
+                                        <span *ngIf="group=='week'">{{f | dateformat2:'M/D ddd'}} - {{f | dateformat3:'M/D ddd':'6':'day'}}</span>
+                                        <span *ngIf="group=='weekly'">{{f | dateformat2:'M/D ddd'}}</span>
+                                        <span *ngIf="group=='month'">{{f | dateformat2:'MMMM'}}</span>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let kpi of keys_valid[section]">
+                                <tr class="bg-warning">
+                                    <th [colSpan]="report[section]['fragments'][0].length + 1">{{kpi['name'] | i18nR}}</th>
+                                </tr>
+                                <tr *ngFor="let k of kpi['expand']">
+                                    <td>{{k['name'] | i18nR}}</td>
+                                    <td *ngFor="let f of report[section]['fragments'][0]; let i=index" class="text-right">
+                                        <div class="nowrap"
+                                             *ngIf="report.containsKey(section) && report[section]['r'].containsKey(kpi['name']) && report[section]['r'][kpi['name']].containsKey(f) && report[section]['r'][kpi['name']][f].containsKey(k['name'])">
+                                            <span *ngIf="k['format'] == 'money'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']] | currency:'COP':true:'1.0-0'}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'ceil'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']] | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'km'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']]/1000 | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'hour'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']]/60 | ceil}}
+                                            </span>
+                                            <span *ngIf="k['format'] == 'percentage'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']] * 100 | ceil}}%
+                                            </span>
+                                            <span *ngIf="k['format'] == 'avg_km'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']]/1000 | dec2 }} kms.
+                                            </span>
+                                            <span *ngIf="k['format'] == 'avg_min'">
+                                                {{report[section]['r'][kpi['name']][f][k['name']] | ceil}} min.
+                                            </span>
+                                            <span *ngIf="k['format'] == ''">
+                                                {{report[section]['r'][kpi['name']][f][k['name']]}}
+                                            </span>
+                                        </div>
+                                        <div *ngIf="!report.containsKey(section) || !report[section]['r'].containsKey(kpi['name']) || !report[section]['r'][kpi['name']].containsKey(f) || !report[section]['r'][kpi['name']][f].containsKey(k['name'])">
+                                            0
+                                        </div>
+                                        <div class="nowrap"
+                                             *ngIf="i>0 &&
+                                             report.containsKey(section) && report[section]['r'].containsKey(kpi['name']) && report[section]['r'][kpi['name']].containsKey(f) && report[section]['r'][kpi['name']][f].containsKey(k['name']) &&
+                                             report[section]['r'][kpi['name']].containsKey(report[section]['fragments'][0][i-1]) &&
+                                             report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]].containsKey(k['name'])">
+
+                                            <div *ngIf="k['color']=='add' && xfnum" (click)="xfnum=!xfnum"
+                                                      class="hand"
+                                                      [ngClass]="{'red': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] < 0, 'green': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] > 0}">
+                                                
+                                                <span *ngIf="k['format'] == 'money'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] | currency:'COP':true:'1.0-0'}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'ceil'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'km'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/1000 | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'hour'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/60 | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'percentage'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])*100 | ceil}}%
+                                                </span>
+                                                <span *ngIf="k['format'] == 'avg_km'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/1000 | dec2}} kms.
+                                                </span>
+                                                <span *ngIf="k['format'] == 'avg_min'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]) | ceil}} min.
+                                                </span>
+                                                <span *ngIf="k['format'] == ''">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]}}
+                                                </span>
+                                            </div>
+
+                                            <div *ngIf="k['color']=='sub' && xfnum" (click)="xfnum=!xfnum"
+                                                  class="hand"
+                                                  [ngClass]="{'red': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] > 0, 'green': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] < 0}">
+                                                
+                                                <span *ngIf="k['format'] == 'money'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] | currency:'COP':true:'1.0-0'}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'ceil'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'km'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/1000 | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'hour'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/60 | ceil}}
+                                                </span>
+                                                <span *ngIf="k['format'] == 'hour'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])*100 | ceil}}%
+                                                </span>
+                                                <span *ngIf="k['format'] == 'avg_km'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']])/1000 | dec2}} kms.
+                                                </span>
+                                                <span *ngIf="k['format'] == 'avg_min'">
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]) | ceil}} min.
+                                                </span>
+                                                <span *ngIf="k['format'] == ''">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]}}
+                                                </span>
+                                            </div>
+
+                                            <!--Por porcentaje-->
+                                            <div *ngIf="!xfnum && k['color']=='add'" (click)="xfnum=!xfnum" class="hand"
+                                                 [ngClass]="{'red': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] < 0, 'green': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] > 0}">
+                                                <div *ngIf="report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] != 0">
+                                                    
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] / report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]) * 100 - 100 | onedecimal}} %
+                                                </div>
+                                                <div *ngIf="report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] == 0">
+                                                    
+                                                    <span *ngIf="k['format'] == 'km'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']]/1000 * 100 | onedecimal}} %
+                                                    </span>
+                                                    <span *ngIf="k['format'] == 'hour'">
+                                                        {{report[section]['r'][kpi['name']][f][k['name']]/60 * 100 | onedecimal}} %
+                                                    </span>
+                                                    <span *ngIf="k['format'] == ''">
+                                                        {{report[section]['r'][kpi['name']][f][k['name']] * 100 | onedecimal}} %
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div *ngIf="!xfnum && k['color']=='sub'" (click)="xfnum=!xfnum" class="hand"
+                                                 [ngClass]="{'red': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] > 0, 'green': report[section]['r'][kpi['name']][f][k['name']] - report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] < 0}">
+                                                <div *ngIf="report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] != 0">
+                                                    
+                                                    {{(report[section]['r'][kpi['name']][f][k['name']] / report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']]) * 100 - 100 | onedecimal}} %
+                                                </div>
+
+                                                <div *ngIf="report[section]['r'][kpi['name']][report[section]['fragments'][0][i-1]][k['name']] == 0">
+                                                    
+                                                    <span *ngIf="k['format'] == 'km'">
+                                                    {{report[section]['r'][kpi['name']][f][k['name']]/1000 * 100 | onedecimal}} %
+                                                    </span>
+                                                    <span *ngIf="k['format'] == 'hour'">
+                                                        {{report[section]['r'][kpi['name']][f][k['name']]/60 * 100 | onedecimal}} %
+                                                    </span>
+                                                    <span *ngIf="k['format'] == ''">
+                                                        {{report[section]['r'][kpi['name']][f][k['name']] * 100 | onedecimal}} %
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal passenger-->
+
+<div class="modal" id="PassengersModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Pasajero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="passenger_q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchPassagers()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre / Email</th>
+                            <th>Estado</th>
+                            <th class="text-center"><i class="material-icons">settings</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let itemModal of adminServices.list_users">
+                            <td *ngIf="itemModal['personal_info'] != null"><img [src]="itemModal['personal_info']['image']"
+                                     alt="{{itemModal['personal_info']['firstname']}}"
+                                     class="img-map border profile-image rounded"></td>
+                            <td *ngIf="itemModal['personal_info'] != null">
+                                <div>{{itemModal['personal_info']['firstname']}}
+                                    {{itemModal['personal_info']['lastname']}}
+                                </div>
+                                <div>{{itemModal['email']}}</div>
+                            </td>
+                            <td>
+                                <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary"
+                                        (click)="selectItem(itemModal, 'passengers')"><b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal alliance-->
+
+<div class="modal" id="AllianceModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Allianza</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="list_Alliances_child.length > 0">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <input
+                                    [(ngModel)]="alliance_q"
+                                    class="form-control"
+                                    type="text">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-primary" (click)="searchAlliance()"><b>Buscar</b></button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-inverse">
+                            <tr>
+
+                                <th>Nombre Legal</th>
+                                <th>Email/Email Representante</th>
+                                <th>Estado</th>
+                                <th class="text-center">
+                                    <i class="material-icons">settings</i>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let itemModal of list_Alliances_child">
+
+                                <td>
+                                    <div>{{itemModal['legal']['name']}}</div>
+                                </td>
+                                <td>
+                                    <div>{{itemModal['legal']['email']}}</div>
+                                    <div>{{itemModal['legal']['email_representative']}}</div>
+                                </td>
+
+                                <td>
+                                    <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                    <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-outline-primary"
+                                            (click)="selectItem(itemModal, 'alliance')"><b>Seleccionar</b>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--modal cost center-->
+
+
+<div class="modal" id="CostCenter2Modal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Centro de Costos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <input
+                                [(ngModel)]="costcenter_q"
+                                class="form-control"
+                                type="text">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="searchCostCenter()"><b>Buscar</b></button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-inverse">
+                        <tr>
+
+                            <th>Nombre</th>
+                            <th>Tags</th>
+                            <th>Alianza padre</th>
+                            <th>Estado</th>
+                            <th class="text-center">
+                                <i class="material-icons">settings</i>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let itemModal of adminServices.list_costs_centers">
+
+                            <td>
+                                {{itemModal['_id']| id}}
+                            </td>
+                            <td>
+                                {{itemModal['name']}}
+                            </td>
+                            <td>
+                                <span *ngFor="let tag of itemModal['tags']" class="text-primary"><b>{{tag}} </b></span>
+                            </td>
+                            <td>
+                                {{itemModal['alliance_father_id']['legal']['name']}}
+                            </td>
+
+                            <td>
+                                <span *ngIf="itemModal['active']" class="text-success"><b>Activo</b></span>
+                                <span *ngIf="itemModal['active'] == false" class="text-danger"><b>Inactivo</b></span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary"
+                                        (click)="selectItem(itemModal, 'costcenter')"><b>Seleccionar</b>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><b>Aceptar</b></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+.space-list {
+    padding: 10px 30px;
+}
+
+.import-textarea {
+    height: 200px;
+}
+.concept-textarea {
+    height: 100px
+}
+
+.table-inverse {
+    background-color: #445B76 !important;
+}
+
+.thead-inverse th {
+    background-color: #445B76 !important;
+}

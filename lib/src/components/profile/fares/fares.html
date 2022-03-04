@@ -1,0 +1,896 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <!--<div><h1 CLASS="text-center" style="margin-top: 20px;color: #00cc99"><b>ESTE ESPACIO SE ENCUENTRA EN PROCESO DE ACTUALIZACIÓN.</b></h1></div>-->
+<div class="row space">
+    <div class="col-12">
+        <div class="alert alert-danger" role="alert" *ngIf="adminServices.errors.length > 0">
+            <p *ngFor="let e of adminServices.errors">
+                {{e['errorMessage']}}
+            </p>
+        </div>
+    </div>
+    <div class="row col-3">
+        <form>
+            <div class="col-12">
+                <div class="row text-center">
+                    <div class="col-sm-12">
+                        <h2><b>CIUDAD</b></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-success btn-block" (click)="city='Bogota'" [ngClass]="{active: city=='Bogota'}">
+                                <b>Bogotá</b>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-success btn-block" (click)="city='Medellin'" [ngClass]="{active: city=='Medellin'}">
+                                <b>Medellin</b>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-success btn-block" (click)="city='Cali'" [ngClass]="{active: city=='Cali'}">
+                                <b>Cali</b>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-success btn-block" (click)="city='Barranquilla'" [ngClass]="{active: city=='Barranquilla'}">
+                                <b>Barranquilla</b>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-success btn-block" (click)="city='Cartagena'" [ngClass]="{active: city=='Cartagena'}">
+                                <b>Cartagena</b>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span><b>Nota:</b></span>
+                    <ul>
+                        <li class="text-justify">
+                            Si requiere servicio de vehículo de tiempo completo y/o en otra ciudad, se debe realizar bajo cotización en modelo corporativo tradicional.
+                        </li>
+                        <li class="text-justify">
+                            Estas tarifas aplican desde el 31 de enero de 2018.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--Bogota-->
+    <div class="col-9" *ngIf="city=='Bogota'">
+        <div class="text-center">
+            <h2><b>TARIFAS NACIONALES</b></h2>
+        </div>
+        <div class="p-0">
+            <div class="text-left">
+                <h2><b>Tarifas Base</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Tipo Campero/Camioneta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Precio Base</th>
+                        <td class="text-right">{{(up*3873).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro</th>
+                        <td class="text-right">{{(up*1162).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro fuera del perímetro urbano</th>
+                        <td class="text-right">{{(up*2840).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas</th>
+                        <td class="text-right">Sin costo con tarifa mínima</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo de espera por minuto</th>
+                        <td class="text-right">{{(up*474).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo en recorrido por minuto</th>
+                        <td class="text-right">{{((up*219)+1).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Valor por hora (proporcional)***</th>
+                        <td class="text-right">{{(up*28400).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Tarifas Mínimas*</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto/Ruta</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana</th>
+                        <td class="text-right">{{(up*7746).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva VAN (5-10 Pasajeros)</th>
+                        <td class="text-right">{{(up*60950).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Chía</th>
+                        <td class="text-right">{{(up*90364).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Soacha</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Siberia</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Cajicá</th>
+                        <td class="text-right">{{((up*103274)+1).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Cota</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Facatativá</th>
+                        <td class="text-right">{{(up*142001).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Funza</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Fusagasugá</th>
+                        <td class="text-right">{{(up*258184).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - La Calera</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Madrid</th>
+                        <td class="text-right">{{(up*90364).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Mosquera</th>
+                        <td class="text-right">{{(up*77455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Sopo</th>
+                        <td class="text-right">{{(up*103275).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Zipaquirá</th>
+                        <td class="text-right">{{(up*116183).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - Gachancipá</th>
+                        <td class="text-right">{{(up*148456).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Bogotá - San Luis</th>
+                        <td class="text-right">{{(up*45225).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Recargos</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Aeropuerto</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Nocturno**</th>
+                        <td class="text-right">{{(up*3873).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fines de Semana y Festivos**</th>
+                        <td class="text-right">{{(up*3873).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Salida del Perímetro Urbano</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr *ngIf="know_driver">
+                        <th class="text-left">Reserva Premium</th>
+                        <td class="text-right">{{(25819*update_fare_2020).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Cancelaciones</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Inmediatos (5-15 min)</th>
+                        <td class="text-right">{{(up*7746).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas (&lt;60 min)</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Viajes Tradicionales (&lt;24 Horas)</th>
+                        <td class="text-right">Total del valor cotizado</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fuera del Perímetro Urbano (Según desplazamiento al lugar de recogida)</th>
+                        <td class="text-right">El equivalente a la tarifa mínima</td>
+                    </tr>
+                    <!--<tr *ngIf="know_driver">-->
+                        <!--<th class="text-left">Reserva Premium</th>-->
+                        <!--<td class="text-right">{{(20000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Medellin-->
+    <div class="col-9" *ngIf="city=='Medellin'">
+        <div class="text-center">
+            <h2><b>TARIFAS NACIONALES</b></h2>
+        </div>
+        <div class="p-0">
+            <div class="text-left">
+                <h2><b>Tarifas Base</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Tipo Campero/Camioneta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Precio Base</th>
+                        <td class="text-right">{{(up*3873).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro</th>
+                        <td class="text-right">{{(up*1162).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro fuera del perímetro urbano</th>
+                        <td class="text-right">{{(up*2840).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas</th>
+                        <td class="text-right">Sin costo con tarifa mínima</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo de espera por minuto</th>
+                        <td class="text-right">{{(up*516).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo en recorrido por minuto</th>
+                        <td class="text-right">{{(up*219).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Valor por hora (proporcional)***</th>
+                        <td class="text-right">{{(up*30982).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Tarifas Mínimas*</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto/Ruta</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana</th>
+                        <td class="text-right">{{(up*10327).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <!--<tr>-->
+                        <!--<th class="text-left">Tarifa Urbana Reserva VAN (5-10 Pasajeros)</th>-->
+                        <!--<td class="text-right">{{(50000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <th class="text-left">Medellin - Aeropuerto JMC</th>
+                        <td class="text-right">{{(up*103274).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Medellin - Rionegro (Casco Urbano)</th>
+                        <td class="text-right">{{(up*116183).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Recargos</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Aeropuerto</th>
+                        <td class="text-right">{{(up*6455).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Nocturno**</th>
+                        <td class="text-right">{{(up*5164).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fines de Semana y Festivos**</th>
+                        <td class="text-right">{{(up*5164).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Cancelaciones</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Inmediatos (5-15 min)</th>
+                        <td class="text-right">{{(up*10327).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas (&lt;60 min)</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Viajes Tradicionales (&lt;24 Horas)</th>
+                        <td class="text-right">Total del valor cotizado</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fuera del Perímetro Urbano (Según desplazamiento al lugar de recogida)</th>
+                        <td class="text-right">El equivalente a la tarifa mínima</td>
+                    </tr>
+                    <!--<tr *ngIf="know_driver">-->
+                    <!--<th class="text-left">Reserva Premium</th>-->
+                    <!--<td class="text-right">{{(20000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Cali-->
+    <div class="col-9" *ngIf="city=='Cali'">
+        <div class="text-center">
+            <h2><b>TARIFAS NACIONALES</b></h2>
+        </div>
+        <div class="p-0">
+            <div class="text-left">
+                <h2><b>Tarifas Base</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Tipo Campero/Camioneta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Precio Base</th>
+                        <td class="text-right">{{(up*3873).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro</th>
+                        <td class="text-right">{{(up*1162).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro fuera del perímetro urbano</th>
+                        <td class="text-right">{{(up*3201).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas</th>
+                        <td class="text-right">Sin costo con tarifa mínima</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo de espera por minuto</th>
+                        <td class="text-right">{{(up*516).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo en recorrido por minuto</th>
+                        <td class="text-right">{{(up*219).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Valor por hora (proporcional)***</th>
+                        <td class="text-right">{{(up*30982).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Tarifas Mínimas*</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto/Ruta</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana</th>
+                        <td class="text-right">{{(up*10327).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Cali - Aeropuerto ABA</th>
+                        <td class="text-right">{{(up*96819).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Cali - Jamundí</th>
+                        <td class="text-right">{{(up*64546).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Cali - Yumbo</th>
+                        <td class="text-right">{{(up*51637).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Cali o Aeropuerto - Buenaventura</th>
+                        <td class="text-right">{{(up*464732).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Jamundí - Aeropuerto ABA</th>
+                        <td class="text-right">{{(up*148456).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Recargos</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Aeropuerto</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Nocturno**</th>
+                        <td class="text-right">{{(up*5164).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fines de Semana y Festivos**</th>
+                        <td class="text-right">{{(up*5164).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Salida del Perímetro Urbano</th>
+                        <td class="text-right">{{(up*15491).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Cancelaciones</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Inmediatos (5-15 min)</th>
+                        <td class="text-right">{{(up*10327).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas (&lt;60 min)</th>
+                        <td class="text-right">{{(up*12909).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Viajes Tradicionales (&lt;24 Horas)</th>
+                        <td class="text-right">Total del valor cotizado</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fuera del Perímetro Urbano (Según desplazamiento al lugar de recogida)</th>
+                        <td class="text-right">El equivalente a la tarifa mínima</td>
+                    </tr>
+                    <!--<tr *ngIf="know_driver">-->
+                    <!--<th class="text-left">Reserva Premium</th>-->
+                    <!--<td class="text-right">{{(20000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Barranquilla-->
+    <div class="col-9" *ngIf="city=='Barranquilla'">
+        <div class="text-center">
+            <h2><b>TARIFAS NACIONALES</b></h2>
+        </div>
+        <div class="p-0">
+            <div class="text-left">
+                <h2><b>Tarifas Base</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Tipo Campero/Camioneta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Precio Base</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro</th>
+                        <td class="text-right">{{(up*1494).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro fuera del perímetro urbano</th>
+                        <td class="text-right">{{(up*3349).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas</th>
+                        <td class="text-right">Sin costo con tarifa mínima</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo de espera por minuto</th>
+                        <td class="text-right">{{(up*609).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo en recorrido por minuto</th>
+                        <td class="text-right">{{(up*283).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Valor por hora (proporcional)***</th>
+                        <td class="text-right">{{(up*36536).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Tarifas Mínimas*</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto/Ruta</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Barranquilla - Aeropuerto Ernesto Cortissoz</th>
+                        <td class="text-right">{{(up*53281).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Barranquilla - Pto. Colombia</th>
+                        <td class="text-right">{{(up*48714).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Recargos</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Aeropuerto</th>
+                        <td class="text-right">{{(up*12179).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Nocturno**</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fines de Semana y Festivos**</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Salida del Perímetro Urbano</th>
+                        <td class="text-right">{{(up*16607).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Cancelaciones</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!--<tr>-->
+                        <!--<th class="text-left">Inmediatos (5-15 min)</th>-->
+                        <!--<td class="text-right">{{(up*6000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <th class="text-left">Reservas (&lt;60 min)</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Viajes Tradicionales (&lt;24 Horas)</th>
+                        <td class="text-right">Total del valor cotizado</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fuera del Perímetro Urbano (Según desplazamiento al lugar de recogida)</th>
+                        <td class="text-right">El equivalente a la tarifa mínima</td>
+                    </tr>
+                    <!--<tr *ngIf="know_driver">-->
+                    <!--<th class="text-left">Reserva Premium</th>-->
+                    <!--<td class="text-right">{{(20000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Cartagena-->
+    <div class="col-9" *ngIf="city=='Cartagena'">
+        <div class="text-center">
+            <h2><b>TARIFAS NACIONALES</b></h2>
+        </div>
+        <div class="p-0">
+            <div class="text-left">
+                <h2><b>Tarifas Base</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Tipo Campero/Camioneta</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Precio Base</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro</th>
+                        <td class="text-right">{{(up*1494).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio por kilómetro fuera del perímetro urbano</th>
+                        <td class="text-right">{{(up*3349).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Reservas</th>
+                        <td class="text-right">Sin costo con tarifa mínima</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo de espera por minuto</th>
+                        <td class="text-right">{{(up*609).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Precio del tiempo en recorrido por minuto</th>
+                        <td class="text-right">{{(up*283).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Valor por hora (proporcional)***</th>
+                        <td class="text-right">{{(up*36536).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Tarifas Mínimas*</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto/Ruta</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Tarifa Urbana Reserva</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <!--<tr>-->
+                        <!--<th class="text-left">Cartagena - Aeropuerto</th>-->
+                        <!--<td class="text-right">{{(up*25000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <th class="text-left">Cartagena - Mamonal</th>
+                        <td class="text-right">{{(up*60893).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Recargos</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="text-left">Aeropuerto</th>
+                        <td class="text-right">{{(up*18268).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Nocturno**</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fines de Semana y Festivos**</th>
+                        <td class="text-right">{{(up*4982).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Salida del Perímetro Urbano</th>
+                        <td class="text-right">{{(up*16607).round()|money}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-left space">
+                <h2><b>Cancelaciones</b></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th class="text-center">Concepto</th>
+                        <th class="text-center">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!--<tr>-->
+                        <!--<th class="text-left">Inmediatos (5-15 min)</th>-->
+                        <!--<td class="text-right">{{(up*6000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <th class="text-left">Reservas (&lt;60 min)</th>
+                        <td class="text-right">{{(up*22835).round()|money}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Viajes Tradicionales (&lt;24 Horas)</th>
+                        <td class="text-right">Total del valor cotizado</td>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Fuera del Perímetro Urbano (Según desplazamiento al lugar de recogida)</th>
+                        <td class="text-right">El equivalente a la tarifa mínima</td>
+                    </tr>
+                    <!--<tr *ngIf="know_driver">-->
+                    <!--<th class="text-left">Reserva Premium</th>-->
+                    <!--<td class="text-right">{{(20000).round()|money}}</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="space text-justify col-12">
+        Para otro tipo de vehiculos se deben programar con 48 horas de anticipacion y depende de la disponibilidad previa aceptación de la cotizacion de la capacidad, recorido y fecha.
+    </div>
+    <div class="space text-justify col-12 p-4">
+        <span>*El valor estimado del servicio es variable, pero se determina computando los siguientes factores:
+            (i) tarifa base; (ii) distancia; (iii) tiempo; (iv) recargos; (v) tasa tecnológica, teniendo en cuenta las condiciones del viaje,
+            tipo, funciones, origen – destino (viaje ida y vuelta), IPC, SMML, precio del galón de combustible,
+            cambios en tarifas de peajes y/o asignación de valores a planes de rodamiento. </span><br>
+        <span>**No son acumulables en el mismo viaje, se cobra solo el de mayor valor.</span><br>
+        <span>***Trayectos superiores a 30 min aplica el precio más alto entre formula y valor proporcional por hora.</span>
+    </div>
+
+</div>
+</div>

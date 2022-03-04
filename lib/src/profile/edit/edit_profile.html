@@ -1,0 +1,186 @@
+<sel-menu_top></sel-menu_top>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav class="breadcrumb">
+                <span class="breadcrumb-item">Perfil</span>
+                <span class="breadcrumb-item active">Editar</span>
+            </nav>
+        </div>
+        <div class="col-12" *ngIf="user_view!=null">
+            <div>
+                <h1>Editar Usuario/ {{user_view['email']}}</h1>
+            </div>
+            <div class="container">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="card-text">
+                            <!--<div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-firstname').length > 0}">
+                                <label for="firstname" class="col-md-2 col-form-label">Nombres</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['firstname']"
+                                            class="form-control"
+                                            type="text"
+                                            id="firstname">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-firstname').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-firstname')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-lastname').length > 0}">
+                                <label for="lastname" class="col-md-2 col-form-label">Apellidos</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['lastname']"
+                                            class="form-control"
+                                            type="text"
+                                            id="lastname">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-lastname').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-lastname')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-phone').length > 0}">
+                                <label for="phone" class="col-md-2 col-form-label">Teléfono</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['phone']"
+                                            class="form-control"
+                                            type="text"
+                                            id="phone">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-phone').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-phone')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'password').length > 0}">
+                                <label for="password" class="col-md-2 col-form-label">Contraseña</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['password']"
+                                            class="form-control"
+                                            type="password"
+                                            id="password"
+                                            (click)="clearError()">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'password').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'password')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" [ngClass]="{'has-danger': err.containsKey('errorMessage')}">
+                                <label for="password" class="col-md-2 col-form-label">Confirmación Contraseña</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="checkPass"
+                                            class="form-control"
+                                            type="password"
+                                            id="check_password"
+                                            (click)="clearError()"
+                                    >
+                                    <div class="form-control-feedback" *ngIf="err.containsKey('errorMessage')">
+                                        {{err['errorMessage']}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="form-group row" [ngClass]="{'has-danger': (adminServices.errors | getErrors:'personal_info-image').length > 0}">
+                                <label for="image" class="col-md-2 col-form-label" >Image</label>
+                                <div class="col-md-10">
+                                    <input
+                                            [(ngModel)]="user_view['personal_info']['image']"
+                                            class="form-control"
+                                            type="text"
+                                            id="image">
+                                    <div class="form-control-feedback" *ngIf="(adminServices.errors | getErrors:'personal_info-image').length > 0">
+                                        <p *ngFor="let e of (adminServices.errors | getErrors:'personal_info-image')">
+                                            {{e['errorMessage']}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>-->
+
+
+                            <div class="card-footer text-center">
+                                <button (click)="save()" class="btn btn-outline-primary"><b>Editar</b></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-block">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <th>ID</th>
+                                    <td>{{user_view['_id'] | id}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nombres</th>
+                                    <td>{{user_view['personal_info']['firstname']}} {{user_view['personal_info']['lastname']}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Correo</th>
+                                    <td>{{user_view['email']}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Rol</th>
+                                    <td>{{user_view['type_user'] | i18n}}</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <th colspan="2">Alianza</th>
+                                </tr>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <td>{{user_view['alliance_id']['legal']['name']}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Presupuesto</th>
+                                    <td>{{user_view['balance'] | currency:'COP':true:'1.0-0'}}</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <th colspan="2">Centros de Costo</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">
+                                        <div class="col-md-4 space-list" *ngFor="let item of user_view['costs_centers_ids']">
+                                            {{user_view['alliances'][item['alliance_father_id']]}} - {{item['name']}}
+                                        </div>
+                                    </th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="selectOwnerModal" aria-hidden="true">
+    <div class="modal-dialog" role="document" *ngIf="user_view!=null">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Usuario {{user_view['email']}} editado con éxito</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver</button>
+                <button type="button" class="btn btn-primary" [routerLink]="goToListTrips('actives')" data-dismiss="modal">Ir a vuelos</button>
+            </div>
+        </div>
+    </div>
+</div>
