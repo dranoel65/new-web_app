@@ -51,6 +51,7 @@ jobs:
             sudo ln -s /usr/lib/dart/bin/pub /usr/bin/pub
             pub get
             pub global run webdev build --output=web:~/app-build
+            ls app-build
         - name: Push the image DEV
           #if: github.ref == 'refs/heads/develop'
           run: |
