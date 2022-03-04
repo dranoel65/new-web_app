@@ -1,0 +1,62 @@
+name: build-dart
+
+on: 
+  push:
+    branches: main
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps: 
+        - name: Checkout
+          uses: actions/checkout@v2
+        
+        - name: Install dart and webdev
+          run: |
+            sudo wget -qO /etc/apt/trusted.gpg.d/dart_linux_signing_key.asc https://dl-ssl.google.com/linux/linux_signing_key.pub
+            sudo wget -qO /etc/apt/sources.list.d/dart_stable.list https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list
+            wget --no-check-certificate https://storage.googleapis.com/dart-archive/channels/stable/release/2.7.1/linux_packages/dart_2.7.1-1_amd64.deb
+            sudo apt install ./dart_2.7.1-1_amd64.deb
+            export PATH="$PATH:/lib/dart/bin/"
+            sudo apt install global
+            pub global activate webdev
+        
+        - uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-1
+
+        - name: S3cmd install
+          run: |
+            sudo apt-get install s3cmd
+            s3cmd --configure
+        #- name: S3cmd configure
+        #  uses: s3cmd-actions/s3cmd@v1
+        #  with:
+        #    Access Key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #    Secret Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+        - name: Set up S3cmd cli tool
+          uses: s3-actions/s3cmd@v1.1
+          with:
+            provider: aws # default is
+            region: 'us-east-1'
+            access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+        - name: build
+          run: |
+            sudo ln -s /usr/lib/dart/bin/pub /usr/bin/pub
+            pub global run webdev build --output=web:/app-build
+        - name: Push the image DEV
+          if: github.ref == 'refs/heads/develop'
+          run: |
+            # deploy app to s3
+            ./deploy_web_app.sh ${{ secrets.site_develop }} ${{ secrets.bucket_develop }}
+        - name: Push the image qa
+          if: github.ref == 'refs/heads/qa'
+          run: |
+            # deploy app to s3
+            ./deploy_web_app.sh ${{ secrets.site_qa }} ${{ secrets.bucket_qa }}
