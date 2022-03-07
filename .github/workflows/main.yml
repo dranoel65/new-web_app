@@ -53,6 +53,8 @@ jobs:
             mkdir ~/app-build
             pub global run webdev build --output=web:~/app-build
             echo "startls"
+            pwd
+            ls -la
             ls ~/app-build
         - name: Push the image DEV
           #if: github.ref == 'refs/heads/develop'
