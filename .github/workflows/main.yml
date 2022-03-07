@@ -50,12 +50,12 @@ jobs:
           run: |
             sudo ln -s /usr/lib/dart/bin/pub /usr/bin/pub
             pub get
-            mkdir ~/app-build
-            pub global run webdev build --output=web:~/app-build
+            mkdir app-build
+            pub global run webdev build --output=web:app-build
             echo "startls"
             pwd
             ls -la
-            ls ~/app-build
+            ls app-build
         - name: Push the image DEV
           #if: github.ref == 'refs/heads/develop'
           run: |
