@@ -1,6 +1,6 @@
 echo "*************************************"
 LANG="en_US.utf-8"
-cd app-build
+cd ~/app-build
 
 # Variables
 seed=$(( ( RANDOM % 1000 )  + 1 ))
