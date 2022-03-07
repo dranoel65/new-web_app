@@ -1,6 +1,5 @@
 echo "*************************************"
 LANG="en_US.utf-8"
-cd ~/app-build
 
 # Variables
 seed=$(( ( RANDOM % 1000 )  + 1 ))
@@ -8,7 +7,7 @@ site=$1
 bucket=$2
 
 # Build Folder
-cd ~/app-build
+cd app-build
 
 mkdir -p build-dev/css/bootstrap
 
